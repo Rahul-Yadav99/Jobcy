@@ -50,7 +50,7 @@ const Login = () => {
     }
 
     return (
-        <View className="flex-1">
+        <View className="flex-1 justify-center">
             <View className="p-4">
                 <Text className="text-lg font-bold mb-2">E-mail</Text>
                 <TextInput
