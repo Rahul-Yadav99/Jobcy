@@ -4,7 +4,7 @@ import { USER_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const Login = () => {
     const router = useRouter();
@@ -50,7 +50,7 @@ const Login = () => {
     }
 
     return (
-        <View className="flex-1 justify-center">
+        <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={100} className="flex-1 justify-end">
             <View className="p-4">
                 <Text className="text-lg font-bold mb-2">E-mail</Text>
                 <TextInput
@@ -59,6 +59,7 @@ const Login = () => {
                     className="border border-neutral-300 rounded-md px-4 mb-2"
                     placeholder="Enter your E-mail"
                 />
+                <Text className="text-lg font-bold mb-2">Password</Text>
                 <TextInput
                     value={password}
                     onChangeText={setPassword}
@@ -68,7 +69,7 @@ const Login = () => {
                 />
                 <TouchableOpacity
                     onPress={handleLogin}
-                    className="bg-blue-500 text-center p-3 rounded-lg"
+                    className="bg-pink-500 text-center p-3 rounded-lg"
                     activeOpacity={0.5}
                 >
                     <Text className="text-white text-center">Login</Text>
@@ -79,7 +80,7 @@ const Login = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
 
