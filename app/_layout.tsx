@@ -1,11 +1,17 @@
-// app/_layout.js
-import { Slot } from 'expo-router';
-import { AuthProvider } from '../context/AuthContext';
+import { Stack } from 'expo-router'
+import { StatusBar } from 'expo-status-bar'
+import React from 'react'
+import '../global.css'
 
-export default function RootLayout() {
+const RootLayout = () => {
   return (
-    <AuthProvider>
-      <Slot />
-    </AuthProvider>
-  );
+    <>
+      <StatusBar style='dark' />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(auth)" />
+      </Stack>
+    </>
+  )
 }
+
+export default RootLayout

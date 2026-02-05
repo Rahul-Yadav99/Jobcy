@@ -1,7 +1,7 @@
 // utils/authService.js
 import * as SecureStore from 'expo-secure-store';
 
-const TOKEN_KEY = 'jwt_token';
+const TOKEN_KEY = 'token';
 
 export const authService = {
     async saveToken(token: any) {
