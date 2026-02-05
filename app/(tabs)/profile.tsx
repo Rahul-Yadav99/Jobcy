@@ -1,15 +1,15 @@
-// app/(tabs)/index.js
+// app/(tabs)/profile.js
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 
-export default function HomeScreen() {
-    const { user } = useAuth();
+export default function ProfileScreen() {
+    const { logout } = useAuth();
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Welcome to Home!</Text>
-            <Text>You are logged in</Text>
+            <Text style={styles.title}>Profile Screen</Text>
+            <Button title="Logout" onPress={logout} color="red" />
         </View>
     );
 }
@@ -24,6 +24,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginBottom: 20,
     },
 });

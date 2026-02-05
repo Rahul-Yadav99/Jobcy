@@ -1,26 +1,32 @@
+// app/(tabs)/_layout.js
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import React from 'react';
 
-const TabsLayout = () => {
+export default function TabsLayout() {
     return (
-        <Tabs screenOptions={{ headerShown: false }}>
+        <Tabs
+            screenOptions={{
+                headerShown: true,
+            }}
+        >
             <Tabs.Screen
-                name='index'
+                name="index"
                 options={{
                     title: 'Home',
-                    tabBarIcon: ({ size, color }) => <Ionicons name='home' size={size} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="home" size={size} color={color} />
+                    ),
                 }}
             />
             <Tabs.Screen
-                name='settings'
+                name="profile"
                 options={{
-                    title: 'Settings',
-                    tabBarIcon: ({ size, color }) => <Ionicons name='settings' size={size} color={color} />
+                    title: 'Profile',
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="person" size={size} color={color} />
+                    ),
                 }}
             />
         </Tabs>
-    )
+    );
 }
-
-export default TabsLayout

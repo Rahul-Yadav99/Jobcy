@@ -1,15 +1,11 @@
-import SafeScreen from "@/components/SafeScreen";
-import { store } from '@/redux/store';
-import { Slot } from "expo-router";
-import { Provider } from 'react-redux';
-import '../global.css';
+// app/_layout.js
+import { Slot } from 'expo-router';
+import { AuthProvider } from '../context/AuthContext';
 
 export default function RootLayout() {
   return (
-    <Provider store={store}>
-      <SafeScreen>
-        <Slot />
-      </SafeScreen>
-    </Provider>
-  )
+    <AuthProvider>
+      <Slot />
+    </AuthProvider>
+  );
 }
