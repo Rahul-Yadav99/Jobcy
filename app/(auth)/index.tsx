@@ -17,6 +17,10 @@ const Login = () => {
     const login = () => {
         const role = jobSeeker ? 'student' : 'recruiter';
         try {
+            if (!email || !password) {
+                Alert.alert('Error', 'Please fill all the fields');
+                return;
+            }
             setLoading(true);
             const payload = {
                 email,
