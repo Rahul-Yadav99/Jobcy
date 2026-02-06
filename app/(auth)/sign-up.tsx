@@ -6,29 +6,22 @@ import React, { useState } from 'react';
 import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
-const Login = () => {
+const SignUp = () => {
     const router = useRouter();
     const [jobSeeker, setJobSeeker] = useState(true);
     const [recruiter, setRecruiter] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
     const login = () => {
         const role = jobSeeker ? 'student' : 'recruiter';
         try {
-            setLoading(true);
-            const payload = {
-                email,
-                password,
-                role
-            }
-            console.log(payload)
-        } catch (err: any) {
-            console.log(err)
+
+        } catch (error) {
+
         } finally {
-            setLoading(false)
+
         }
+        Alert.alert('Login', role);
     }
     return (
         <SafeScreen>
@@ -42,13 +35,25 @@ const Login = () => {
                     />
                     <Text
                         style={{ marginBottom: moderateScale(8), fontSize: moderateScale(24), color: primaryTextColor }}
-                        className='font-bold'>Welcome Back!</Text>
-                    <Text style={{ fontSize: moderateScale(12), color: secondaryTextColor }}>Sign in to continue your job search.</Text>
+                        className='font-bold'>Create an Account</Text>
+                    <Text style={{ fontSize: moderateScale(12), color: secondaryTextColor }}>Join us for an amazing job search experience.</Text>
                 </View>
                 {/* form */}
                 <View
                     style={{ paddingTop: moderateScale(20), gap: moderateScale(15) }}
                 >
+                    <View>
+                        <Text
+                            style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                            className='font-semibold'
+                        >Name
+                        </Text>
+                        <TextInput
+                            placeholder='Enter your name'
+                            placeholderTextColor={`${placeholderColor}`}
+                            className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                        />
+                    </View>
                     <View>
                         <Text
                             style={{ fontSize: moderateScale(14), color: primaryTextColor }}
@@ -60,8 +65,21 @@ const Login = () => {
                             keyboardType='email-address'
                             autoCapitalize='none'
                             autoCorrect={false}
-                            value={email}
-                            onChangeText={setEmail}
+                            placeholderTextColor={`${placeholderColor}`}
+                            className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                        />
+                    </View>
+                    <View>
+                        <Text
+                            style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                            className='font-semibold'
+                        >Phone Number
+                        </Text>
+                        <TextInput
+                            placeholder='Enter your phone number'
+                            keyboardType='phone-pad'
+                            autoCapitalize='none'
+                            autoCorrect={false}
                             placeholderTextColor={`${placeholderColor}`}
                             className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
                         />
@@ -78,8 +96,6 @@ const Login = () => {
                             secureTextEntry
                             autoCapitalize='none'
                             autoCorrect={false}
-                            value={password}
-                            onChangeText={setPassword}
                             className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
                         />
                     </View>
@@ -103,7 +119,7 @@ const Login = () => {
                                 style={{ backgroundColor: `${jobSeeker ? primaryColor : 'transparent'}`, padding: moderateScale(8), borderRadius: moderateScale(10) }}
                             >
                                 <Text
-                                    className={`${jobSeeker ? 'text-white' : 'text-neutral-500'} text-center`} style={{ fontSize: moderateScale(10) }}
+                                    className={`${jobSeeker ? 'text-white' : 'text-neutral-700'} text-center`} style={{ fontSize: moderateScale(10) }}
                                 >Job Seeker
                                 </Text>
                             </TouchableOpacity>
@@ -117,7 +133,7 @@ const Login = () => {
                                 style={{ backgroundColor: `${recruiter ? primaryColor : 'transparent'}`, padding: moderateScale(8), borderRadius: moderateScale(10) }}
                             >
                                 <Text
-                                    className={`${recruiter ? 'text-white' : 'text-neutral-500'} text-center`} style={{ fontSize: moderateScale(10) }}
+                                    className={`${recruiter ? 'text-white' : 'text-neutral-700'} text-center`} style={{ fontSize: moderateScale(10) }}
                                 >Recruiter
                                 </Text>
                             </TouchableOpacity>
@@ -132,7 +148,7 @@ const Login = () => {
                         <Text
                             className='text-white text-center'
                             style={{ fontSize: moderateScale(14) }}
-                        >Sign In
+                        >Sign Up
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -192,17 +208,17 @@ const Login = () => {
                 </View>
                 {/* footer */}
                 <TouchableOpacity
-                    onPress={() => router.push('/(auth)/sign-up')}
+                    onPress={() => router.push('/')}
                     className='flex-row justify-center'
                     style={{ marginTop: moderateScale(20) }}
                 >
                     <Text
                         style={{ fontSize: moderateScale(12), color: secondaryTextColor }}
-                    >Don't have an account? <Text className='text-primary' style={{ fontSize: moderateScale(13), color: primaryTextColor }} >Sign Up</Text></Text>
+                    >I have an account? <Text className='text-primary' style={{ fontSize: moderateScale(13), color: primaryTextColor }} >Sign In</Text></Text>
                 </TouchableOpacity>
             </View>
         </SafeScreen>
     )
 }
 
-export default Login
+export default SignUp
