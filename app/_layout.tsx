@@ -1,4 +1,5 @@
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { useRole } from '@/hooks/useRole'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Slot, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
@@ -12,6 +13,7 @@ const NavigationGuard = () => {
   const router = useRouter()
   const segments = useSegments()
   const { isAuthenticated, isLoading } = useAuth()
+  const { role } = useRole();
 
   useEffect(() => {
     if (isLoading) return
@@ -41,7 +43,7 @@ const RootLayout = () => {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <NavigationGuard />
-        <StatusBar style="auto" />
+        <StatusBar style="dark" />
       </QueryClientProvider>
     </AuthProvider>
   )

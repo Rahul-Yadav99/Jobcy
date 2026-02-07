@@ -34,8 +34,8 @@ const Login = () => {
             console.log(res);
             if (res.success) {
                 await authLogin(res.token, res.user.role);
-                console.log('Login successful, navigating to main...');
-                router.replace('/(main)')
+                console.log(res.user.role);
+               router.replace('/(main)')
             }
         } catch (err: any) {
             Alert.alert('Error', err);

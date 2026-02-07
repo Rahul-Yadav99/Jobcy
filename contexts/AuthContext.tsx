@@ -42,6 +42,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = async () => {
         try {
             await authService.removeToken();
+            await roleService.removeRole();
             setIsAuthenticated(false);
         } catch (error) {
             console.error('Logout failed:', error);
