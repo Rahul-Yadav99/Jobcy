@@ -1,20 +1,23 @@
+import authApi from '@/api/auth';
 import SafeScreen from '@/components/SafeScreen';
+import { useAuth } from '@/contexts/AuthContext';
 import { disabledColor, placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Login = () => {
     const router = useRouter();
+    const { login: authLogin } = useAuth();
     const [jobSeeker, setJobSeeker] = useState(true);
     const [recruiter, setRecruiter] = useState(false);
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const login = () => {
+    const login = async () => {
         const role = jobSeeker ? 'student' : 'recruiter';
         try {
             if (!email || !password) {
@@ -27,9 +30,15 @@ const Login = () => {
                 password,
                 role
             }
-            console.log(payload)
+            const res = await authApi.login(payload);
+            console.log(res);
+            if (res.success) {
+                await authLogin(res.token, res.user.role);
+                console.log('Login successful, navigating to main...');
+                router.replace('/(main)')
+            }
         } catch (err: any) {
-            console.log(err)
+            Alert.alert('Error', err);
         } finally {
             setLoading(false)
         }
@@ -129,15 +138,25 @@ const Login = () => {
                     </View>
                     {/* button */}
                     <TouchableOpacity
+                        disabled={loading}
                         onPress={login}
                         activeOpacity={0.5}
                         style={{ backgroundColor: `${primaryColor}`, padding: moderateScale(10), borderRadius: moderateScale(10) }}
                     >
-                        <Text
-                            className='text-white text-center'
-                            style={{ fontSize: moderateScale(14) }}
-                        >Sign In
-                        </Text>
+                        {
+                            loading ? (
+                                <ActivityIndicator
+                                    color={"white"}
+                                    size={'small'}
+                                />
+                            ) : (
+                                <Text
+                                    className='text-white text-center'
+                                    style={{ fontSize: moderateScale(14) }}
+                                >Sign In
+                                </Text>
+                            )
+                        }
                     </TouchableOpacity>
                 </View>
                 {/* line */}
