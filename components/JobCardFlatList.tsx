@@ -37,16 +37,13 @@ const JobCardFlatList = () => {
         <FlatList
             data={data || []}
             renderItem={({ item }) => <JobCard job={item} />}
-            keyExtractor={(item) => item._id} // Use unique ID instead of index
+            keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
-            style={{ flex: 1 }}
             contentContainerStyle={{
                 paddingHorizontal: moderateScale(20),
                 paddingBottom: moderateScale(20),
-                // flex: 1
             }}
-            scrollEnabled={true}
-            nestedScrollEnabled
+            scrollEnabled={false}
         />
     );
 };

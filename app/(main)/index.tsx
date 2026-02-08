@@ -4,14 +4,19 @@ import JobCardFlatList from '@/components/JobCardFlatList';
 import Recommended from '@/components/Recommended';
 import SafeScreen from '@/components/SafeScreen';
 import React from 'react';
+import { ScrollView } from 'react-native';
 
 const Jobs = () => {
     return (
         <SafeScreen>
             <Header />
-            <HeaderCard />
-            <Recommended />
-            <JobCardFlatList />
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
+                <HeaderCard />
+                <Recommended />
+                <JobCardFlatList />
+            </ScrollView>
         </SafeScreen>
     )
 }
