@@ -5,6 +5,7 @@ import { Slot, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
 import { ActivityIndicator, View } from 'react-native'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import '../global.css'
 
 const queryClient = new QueryClient()
@@ -40,12 +41,14 @@ const NavigationGuard = () => {
 
 const RootLayout = () => {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <NavigationGuard />
-        <StatusBar style="dark" />
-      </QueryClientProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <NavigationGuard />
+          <StatusBar style="dark" />
+        </QueryClientProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   )
 }
 
