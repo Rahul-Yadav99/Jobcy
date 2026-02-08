@@ -33,9 +33,8 @@ const Login = () => {
             const res = await authApi.login(payload);
             console.log(res);
             if (res.success) {
-                await authLogin(res.token, res.user.role);
-                console.log(res.user.role);
-               router.replace('/(main)')
+                await authLogin(res.token, res.user.role, res.user);
+                router.replace('/(main)')
             }
         } catch (err: any) {
             Alert.alert('Error', err);

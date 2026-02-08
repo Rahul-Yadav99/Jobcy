@@ -1,20 +1,24 @@
+import { useAuth } from '@/contexts/AuthContext'
+import { useProfile } from '@/hooks/useProfile'
 import { primaryTextColor, secondaryTextColor } from '@/utils/colors'
 import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 
 const Header = () => {
+    const { user } = useProfile();
+    const { logout } = useAuth();
     return (
         <View
             className='flex-row items-center justify-between'
-            style={{ height: moderateScale(50), paddingHorizontal: moderateScale(20) }}
+            style={{ height: moderateScale(70), paddingHorizontal: moderateScale(20) }}
         >
             <View>
                 <Text
-                    className='text-2xl font-bold'
-                    style={{ color: primaryTextColor }}
+                    className='font-bold capitalize'
+                    style={{ color: primaryTextColor, fontSize: moderateScale(20) }}
                 >
-                    Hi Rahul!
+                    Hi {user?.fullname || 'User'}!
                 </Text>
                 <Text
                     className='text-sm'
@@ -26,6 +30,7 @@ const Header = () => {
 
             <TouchableOpacity
                 activeOpacity={0.9}
+                onPress={() => logout()}
             >
                 <Image
                     source={require('@/assets/images/profile.png')}

@@ -1,10 +1,10 @@
 import React from "react";
 import { Dimensions, Image, ScrollView, View } from "react-native";
-import { moderateScale } from "react-native-size-matters";
+import { moderateScale, verticalScale } from "react-native-size-matters";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = width * 0.7;
-const SPACING = 16;
+const SPACING = moderateScale(16);
 
 const HeaderCard = () => {
     return (
@@ -34,16 +34,16 @@ const HeaderCard = () => {
                         marginRight: SPACING,
                         borderRadius: 16,
                         overflow: "hidden",
-                        marginVertical: moderateScale(16),
+                        marginVertical: verticalScale(10),
                     }}
                 >
                     <Image
                         source={img}
                         style={{
                             width: "100%",
-                            height: 200,
+                            height: verticalScale(150),
                         }}
-                        resizeMode="cover"
+                        resizeMode="contain"
                     />
                 </View>
             ))}

@@ -1,17 +1,21 @@
 import Header from '@/components/Header';
 import HeaderCard from '@/components/HeaderCard';
+import JobsSection from '@/components/JobsSection';
 import SafeScreen from '@/components/SafeScreen';
-import { useAuth } from '@/contexts/AuthContext';
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 const Jobs = () => {
-    const { logout } = useAuth();
     return (
         <SafeScreen>
             <View className='flex-1'>
                 <Header />
-                <HeaderCard />
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                >
+                    <HeaderCard />
+                    <JobsSection />
+                </ScrollView>
             </View>
         </SafeScreen>
     )

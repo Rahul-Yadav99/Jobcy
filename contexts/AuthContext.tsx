@@ -1,11 +1,12 @@
 import { authService } from '@/services/authService';
+import { profileService } from '@/services/profileService';
 import { roleService } from '@/services/roleService';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (token: string, role: string) => Promise<void>;
+    login: (token: string, role: string, user: any) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
 }
@@ -28,10 +29,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    const login = async (token: string, role: string) => {
+    const login = async (token: string, role: string, user: any) => {
         try {
             await authService.saveToken(token);
             await roleService.saveRole(role);
+            await profileService.saveUser(user);
             setIsAuthenticated(true);
         } catch (error) {
             console.error('Login failed:', error);
@@ -43,6 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             await authService.removeToken();
             await roleService.removeRole();
+            await profileService.deleteUser();
             setIsAuthenticated(false);
         } catch (error) {
             console.error('Logout failed:', error);
