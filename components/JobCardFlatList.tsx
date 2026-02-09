@@ -1,10 +1,13 @@
 import jobApi from '@/api/job';
-import { primaryColor, secondaryTextColor } from '@/utils/colors';
+import { primaryColor } from '@/utils/colors';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
+import Empty from './Empty';
+import HeaderCard from './HeaderCard';
 import JobCard from './JobCard';
+import Recommended from './Recommended';
 
 const JobCardFlatList = () => {
     const { data, isLoading, error } = useQuery({
@@ -25,11 +28,7 @@ const JobCardFlatList = () => {
 
     if (error) {
         return (
-            <View className='flex-1 items-center justify-center px-5'>
-                <Text style={{ color: secondaryTextColor }}>
-                    Failed to load jobs. Please try again.
-                </Text>
-            </View>
+            <Empty message='Failed to load jobs. Please try again.' />
         );
     }
 
@@ -39,11 +38,18 @@ const JobCardFlatList = () => {
             renderItem={({ item }) => <JobCard job={item} />}
             keyExtractor={(item) => item._id}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+                <>
+                    <HeaderCard />
+                    <Recommended />
+                </>
+            }
+            ListEmptyComponent={
+                <Empty message='No jobs found' />
+            }
             contentContainerStyle={{
-                paddingHorizontal: moderateScale(20),
-                paddingBottom: moderateScale(20),
+                flexGrow: 1,
             }}
-            scrollEnabled={false}
         />
     );
 };

@@ -14,6 +14,7 @@ const JobCard = ({ job }: { job: any }) => {
             style={{
                 marginBottom: moderateScale(10),
                 padding: moderateScale(10),
+                marginHorizontal: moderateScale(20),
             }}
         >
             <View className='flex-row items-center justify-between'
