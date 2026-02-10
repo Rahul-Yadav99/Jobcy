@@ -11,7 +11,7 @@ const Header = () => {
     return (
         <View
             className='flex-row items-center justify-between border-b border-neutral-300'
-            style={{ height: moderateScale(70), paddingHorizontal: moderateScale(20) }}
+            style={{ height: moderateScale(60), paddingHorizontal: moderateScale(20) }}
         >
             <View>
                 <Text
