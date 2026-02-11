@@ -31,10 +31,13 @@ const Login = () => {
                 role
             }
             const res = await authApi.login(payload);
-            console.log(res);
             if (res.success) {
                 await authLogin(res.token, res.user.role, res.user);
-                router.replace('/(main)')
+                if (res.user.role === 'student') {
+                    router.replace('/(student)/home')
+                } else if (res.user.role === 'recruiter') {
+                    router.replace('/(recruiter)/recruiterDashboard')
+                }
             }
         } catch (err: any) {
             Alert.alert('Error', err);
