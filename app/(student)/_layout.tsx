@@ -1,6 +1,6 @@
 import { disabledColor, primaryColor } from '@/utils/colors'
 import { Tabs } from 'expo-router'
-import { Home } from 'lucide-react-native'
+import { Home, LayoutDashboard } from 'lucide-react-native'
 import React from 'react'
 import { moderateScale } from 'react-native-size-matters'
 
@@ -28,7 +28,15 @@ const StudentLayout = () => {
                     )
                 }}
             />
-            <Tabs.Screen name='profile' />
+            <Tabs.Screen
+                name='studentDashboard'
+                options={{
+                    title: 'Dashboard',
+                    tabBarIcon: ({ color }) => (
+                        <LayoutDashboard size={moderateScale(20)} color={color} />
+                    )
+                }}
+            />
         </Tabs>
     )
 }
