@@ -16,7 +16,7 @@ const StudentHome = () => {
             >
                 <Text>StudentHome</Text>
                 <Button title='Logout' onPress={() => logout()} />
-                <Button title='Data' onPress={() => router.push('/(student)/profile')} />
+                <Button title='Data' onPress={() => router.push('/profile')} />
             </View>
         </SafeScreen>
     )
