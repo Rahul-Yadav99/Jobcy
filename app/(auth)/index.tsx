@@ -34,9 +34,9 @@ const Login = () => {
             if (res.success) {
                 await authLogin(res.token, res.user.role, res.user);
                 if (res.user.role === 'student') {
-                    router.replace('/(student)/home')
+                    router.replace('/(student)')
                 } else if (res.user.role === 'recruiter') {
-                    router.replace('/(recruiter)/recruiterDashboard')
+                    router.replace('/(recruiter)')
                 }
             }
         } catch (err: any) {

@@ -15,9 +15,9 @@ const Index = () => {
             router.replace('/(auth)')
         } else if (isAuthenticated) {
             if (role === 'student') {
-                router.replace('/(student)/home')
+                router.replace('/(student)')
             } else if (role === 'recruiter') {
-                router.replace('/(recruiter)/recruiterDashboard')
+                router.replace('/(recruiter)')
             }
         }
     }, [isLoading, isAuthenticated, role])

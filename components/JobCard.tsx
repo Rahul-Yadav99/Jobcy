@@ -1,15 +1,17 @@
 import { primaryTextColor, secondaryTextColor } from '@/utils/colors'
 import { formatDate } from '@/utils/formateDate'
+import { useRouter } from 'expo-router'
 import { Calendar, IndianRupee, MapPin } from 'lucide-react-native'
 import React from 'react'
-import { Alert, Image, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale, verticalScale } from 'react-native-size-matters'
 
 const JobCard = ({ job }: { job: any }) => {
+    const router = useRouter();
     return (
         <TouchableOpacity
             activeOpacity={0.9}
-            onPress={() => Alert.alert(job._id)}
+            onPress={() => router.push(`/jobDetails/${job._id}`)}
             className='border border-neutral-300 rounded-xl'
             style={{
                 marginBottom: moderateScale(10),

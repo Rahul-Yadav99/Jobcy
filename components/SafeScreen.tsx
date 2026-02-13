@@ -8,7 +8,6 @@ const SafeScreen = ({ children }: { children: React.ReactNode }) => {
         <View style={{
             ...styles.container,
             paddingTop: insert.top,
-            // paddingBottom: insert.bottom,
         }}>
             {children}
         </View>

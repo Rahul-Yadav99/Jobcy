@@ -13,14 +13,16 @@ const StudentLayout = () => {
                 tabBarInactiveTintColor: disabledColor,
                 tabBarStyle: {
                     backgroundColor: '#fff',
+                    borderTopColor: disabledColor
                 },
                 tabBarLabelStyle: {
                     fontSize: moderateScale(9),
+                    fontWeight: '700',
                 },
             }}
         >
             <Tabs.Screen
-                name='home'
+                name='index'
                 options={{
                     title: 'Home',
                     tabBarIcon: ({ color }) => (

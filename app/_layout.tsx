@@ -7,6 +7,7 @@ import React, { useEffect } from 'react'
 import { ActivityIndicator, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import '../global.css'
+import { primaryColor } from '@/utils/colors'
 
 const queryClient = new QueryClient()
 
@@ -30,9 +31,9 @@ const NavigationGuard = () => {
     } else {
       if (inAuthGroup) {
         if (role === 'student') {
-          router.replace('/(student)/home')
+          router.replace('/(student)')
         } else if (role === 'recruiter') {
-          router.replace('/(recruiter)/recruiterDashboard')
+          router.replace('/(recruiter)')
         }
       }
     }
@@ -41,7 +42,7 @@ const NavigationGuard = () => {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color={primaryColor} />
       </View>
     )
   }

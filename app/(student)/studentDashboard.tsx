@@ -8,17 +8,15 @@ const StudentHome = () => {
     const { logout } = useAuth();
     const router = useRouter();
     return (
-        <SafeScreen>
-            <View className='flex-1 bg-yellow-200'
-            style={{
-                backgroundColor: 'red'
-            }}
-            >
+
+        <View className='flex-1 bg-yellow-600'
+        >
+            <SafeScreen>
                 <Text>StudentHome</Text>
                 <Button title='Logout' onPress={() => logout()} />
                 <Button title='Data' onPress={() => router.push('/profile')} />
-            </View>
-        </SafeScreen>
+            </SafeScreen>
+        </View>
     )
 }
 
