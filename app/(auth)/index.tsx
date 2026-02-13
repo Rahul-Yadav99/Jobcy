@@ -40,7 +40,7 @@ const Login = () => {
                 }
             }
         } catch (err: any) {
-            Alert.alert('Error', err);
+            Alert.alert('Login Failed', err);
         } finally {
             setLoading(false)
         }

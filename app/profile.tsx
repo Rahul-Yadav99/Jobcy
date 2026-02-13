@@ -1,25 +1,28 @@
 import BackButton from '@/components/BackButton';
+import EditButton from '@/components/EditButton';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
 import { primaryTextColor, secondaryTextColor } from '@/utils/colors';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, Mail, Phone } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Profile = () => {
     const [user, setUser] = useState<any>(null);
+    const [modalVisible, setModalVisible] = useState(false);
+
     const loadUser = async () => {
         const user = await profileService.getUser();
         setUser(user);
     }
+
     const openResume = async () => {
         if (!user?.profile?.resume) {
             Alert.alert("No Resume", "Resume not available.");
             return;
         }
-
         try {
             await WebBrowser.openBrowserAsync(user.profile.resume);
         } catch (error) {
@@ -33,7 +36,10 @@ const Profile = () => {
     return (
         <SafeScreen>
             <View style={{ padding: moderateScale(16) }}>
-                <BackButton />
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <BackButton />
+                    <EditButton onPress={() => setModalVisible(true)} />
+                </View>
                 <ScrollView
                     contentContainerStyle={{ paddingBottom: moderateScale(64) }}
                     showsVerticalScrollIndicator={false}
@@ -182,7 +188,7 @@ const Profile = () => {
                                 },
                                 {
                                     text: "Delete",
-                                    onPress: () => Alert.alert("Account Deleted Request Accepted", "Your request to delete your account has been accepted. Your account will be deleted within 1 week.")
+                                    onPress: () => Alert.alert("Request Accepted", "Your request to delete your account has been accepted. Your account will be deleted within 1 week.")
                                 }
                             ])}
                             className='rounded-lg bg-red-500'
@@ -200,6 +206,26 @@ const Profile = () => {
                     </View>
                 </ScrollView>
             </View>
+            <Modal
+                visible={modalVisible}
+                animationType="slide"
+                transparent={true}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View className='bg-yellow-500 flex-1'
+                    style={{
+                        // padding: moderateScale(16),
+                        borderRadius: moderateScale(16),
+                        // margin: moderateScale(16),
+                        height: moderateScale(200),
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }}
+                >
+                    <Text>Edit Profile</Text>
+                    <Button title="Close" onPress={() => setModalVisible(false)}></Button>
+                </View>
+            </Modal>
         </SafeScreen>
     )
 }
