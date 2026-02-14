@@ -1,17 +1,19 @@
 import BackButton from '@/components/BackButton';
 import EditButton from '@/components/EditButton';
+import ModalCloseButton from '@/components/ModalCloseButton';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
 import { primaryTextColor, secondaryTextColor } from '@/utils/colors';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, Mail, Phone } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Profile = () => {
     const [user, setUser] = useState<any>(null);
     const [modalVisible, setModalVisible] = useState(false);
+    const [fullName, setFullName] = useState('');
 
     const loadUser = async () => {
         const user = await profileService.getUser();
@@ -33,6 +35,12 @@ const Profile = () => {
     useEffect(() => {
         loadUser();
     }, [])
+
+    useEffect(() => {
+        if (user) {
+            setFullName(user.fullname);
+        }
+    }, [user]);
     return (
         <SafeScreen>
             <View style={{ padding: moderateScale(16) }}>
@@ -121,7 +129,7 @@ const Profile = () => {
                         <View className='border border-neutral-200 rounded-lg' style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: moderateScale(8), padding: moderateScale(8), gap: moderateScale(8) }}>
                             {user?.profile?.skills?.map((skill: string, index: number) => (
                                 <View key={index} className='bg-neutral-100' style={{ padding: moderateScale(8), borderRadius: moderateScale(8) }}>
-                                    <Text className='capitalize' style={{ color: secondaryTextColor }}>{skill}</Text>
+                                    <Text className='capitalize' style={{ color: secondaryTextColor, fontSize: moderateScale(10) }}>{skill}</Text>
                                 </View>
                             ))}
                         </View>
@@ -209,21 +217,95 @@ const Profile = () => {
             <Modal
                 visible={modalVisible}
                 animationType="slide"
-                transparent={true}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View className='bg-yellow-500 flex-1'
-                    style={{
-                        // padding: moderateScale(16),
-                        borderRadius: moderateScale(16),
-                        // margin: moderateScale(16),
-                        height: moderateScale(200),
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text>Edit Profile</Text>
-                    <Button title="Close" onPress={() => setModalVisible(false)}></Button>
+                <View style={{ padding: moderateScale(16) }}>
+                    <View className='flex-row items-center justify-between'>
+                        <Text style={{ fontSize: moderateScale(20), fontWeight: 'bold', color: primaryTextColor }}>Edit Profile</Text>
+                        <ModalCloseButton onPress={() => setModalVisible(false)} />
+                    </View>
+                    <ScrollView>
+                        <Image source={require('@/assets/images/profile.png')} style={{
+                            height: moderateScale(100),
+                            width: moderateScale(100),
+                            borderRadius: moderateScale(50),
+                            alignSelf: 'center',
+                        }} />
+
+                        <View className='border border-neutral-300 rounded-lg' style={{ marginTop: moderateScale(8) }}>
+                            <View
+                                style={{
+                                    padding: moderateScale(8)
+                                }}
+                            >
+                                <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), fontWeight: 'bold', marginBottom: moderateScale(8) }}>Name</Text>
+                                <TextInput
+                                    className='border-b border-neutral-200'
+                                    placeholder='Enter your name'
+                                    value={fullName}
+                                    onChangeText={setFullName}
+                                    style={{
+                                        fontSize: moderateScale(14),
+                                        color: primaryTextColor,
+                                        // borderBottomWidth: moderateScale(1),
+                                        // borderBottomColor: secondaryTextColor,
+                                        // width: '80%',
+                                        // alignSelf: 'center',
+                                    }}
+                                />
+                            </View>
+                        </View>
+                        <View>
+                            <Text style={{
+                                fontSize: moderateScale(16),
+                                fontWeight: 'bold',
+                                color: primaryTextColor,
+                                marginTop: moderateScale(16)
+                            }}>
+                                Contact Information
+                            </Text>
+                            <View className='border border-neutral-200 rounded-lg' style={{ marginTop: moderateScale(8), padding: moderateScale(8), gap: moderateScale(8) }}>
+                                <View className='flex-row items-center'
+                                    style={{
+                                        gap: moderateScale(24),
+                                    }}>
+                                    <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), fontWeight: 'bold' }}>Email</Text>
+                                    <TextInput
+                                        placeholder='Email'
+                                        // value={email}
+                                        // onChangeText={setEmail}
+                                        style={{
+                                            fontSize: moderateScale(14),
+                                            color: primaryTextColor,
+                                            borderBottomWidth: moderateScale(1),
+                                            borderBottomColor: secondaryTextColor,
+                                            width: '80%',
+                                            alignSelf: 'center',
+                                        }}
+                                    />
+                                </View>
+                                <View className='flex-row items-center'
+                                    style={{
+                                        gap: moderateScale(24),
+                                    }}>
+                                    <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), fontWeight: 'bold' }}>Phone</Text>
+                                    <TextInput
+                                        placeholder='Phone'
+                                        // value={phone}
+                                        // onChangeText={setPhone}
+                                        style={{
+                                            fontSize: moderateScale(14),
+                                            color: primaryTextColor,
+                                            borderBottomWidth: moderateScale(1),
+                                            borderBottomColor: secondaryTextColor,
+                                            width: '80%',
+                                            alignSelf: 'center',
+                                        }}
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </ScrollView>
                 </View>
             </Modal>
         </SafeScreen>
