@@ -3,7 +3,8 @@ import EditButton from '@/components/EditButton';
 import ModalCloseButton from '@/components/ModalCloseButton';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
-import { primaryTextColor, secondaryTextColor } from '@/utils/colors';
+import { placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
+import * as DocumentPicker from 'expo-document-picker';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, Mail, Phone } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -14,11 +15,35 @@ const Profile = () => {
     const [user, setUser] = useState<any>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [fullName, setFullName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [skills, setSkills] = useState('');
+    const [bio, setBio] = useState('');
+    const [currentCompanyName, setCurrentCompanyName] = useState('');
+    const [collegeName, setCollegeName] = useState('');
+    const [resume, setResume] = useState<any>(null);
 
     const loadUser = async () => {
         const user = await profileService.getUser();
         setUser(user);
     }
+
+    const pickResume = async () => {
+        try {
+            const result = await DocumentPicker.getDocumentAsync({
+                type: ['application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                copyToCacheDirectory: true,
+            });
+
+            if (!result.canceled) {
+                setResume(result.assets[0]);
+            }
+        } catch (error) {
+            Alert.alert("Error", "Unable to pick resume");
+        }
+    };
 
     const openResume = async () => {
         if (!user?.profile?.resume) {
@@ -39,6 +64,15 @@ const Profile = () => {
     useEffect(() => {
         if (user) {
             setFullName(user.fullname);
+            setEmail(user.email);
+            setPhoneNumber(user.phoneNumber);
+            setBio(user.profile.bio);
+            setCurrentCompanyName(user.profile.currentCompany);
+            setCollegeName(user.profile.college);
+        }
+
+        if (user?.profile?.skills) {
+            setSkills(user.profile.skills.join(", "));
         }
     }, [user]);
     return (
@@ -219,92 +253,117 @@ const Profile = () => {
                 animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={{ padding: moderateScale(16) }}>
+                <View style={{ padding: moderateScale(16), flex: 1, backgroundColor: 'white' }}>
                     <View className='flex-row items-center justify-between'>
                         <Text style={{ fontSize: moderateScale(20), fontWeight: 'bold', color: primaryTextColor }}>Edit Profile</Text>
                         <ModalCloseButton onPress={() => setModalVisible(false)} />
                     </View>
-                    <ScrollView>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ flexGrow: 1 }}
+                    >
                         <Image source={require('@/assets/images/profile.png')} style={{
                             height: moderateScale(100),
                             width: moderateScale(100),
                             borderRadius: moderateScale(50),
                             alignSelf: 'center',
                         }} />
-
-                        <View className='border border-neutral-300 rounded-lg' style={{ marginTop: moderateScale(8) }}>
-                            <View
-                                style={{
-                                    padding: moderateScale(8)
-                                }}
-                            >
-                                <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), fontWeight: 'bold', marginBottom: moderateScale(8) }}>Name</Text>
-                                <TextInput
-                                    className='border-b border-neutral-200'
-                                    placeholder='Enter your name'
-                                    value={fullName}
-                                    onChangeText={setFullName}
-                                    style={{
-                                        fontSize: moderateScale(14),
-                                        color: primaryTextColor,
-                                        // borderBottomWidth: moderateScale(1),
-                                        // borderBottomColor: secondaryTextColor,
-                                        // width: '80%',
-                                        // alignSelf: 'center',
-                                    }}
-                                />
-                            </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Name</Text>
+                            <TextInput
+                                placeholder='Enter your name'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={fullName}
+                                onChangeText={setFullName}
+                                autoCorrect={false}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
                         </View>
-                        <View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Email</Text>
+                            <TextInput
+                                placeholder='Enter your email'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={email}
+                                onChangeText={setEmail}
+                                autoCorrect={false}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
+                        </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>College</Text>
+                            <TextInput
+                                placeholder='Enter your college name'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={collegeName}
+                                onChangeText={setCollegeName}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
+                        </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Current Company</Text>
+                            <TextInput
+                                placeholder='Enter your current company name'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={currentCompanyName}
+                                onChangeText={setCurrentCompanyName}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
+                        </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Phone Number</Text>
+                            <TextInput
+                                placeholder='Enter your phone number'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={phoneNumber}
+                                onChangeText={setPhoneNumber}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
+                        </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Skills</Text>
+                            <TextInput
+                                placeholder='Enter your skills'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={skills}
+                                onChangeText={setSkills}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
+                        </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
+                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Bio</Text>
+                            <TextInput
+                                placeholder='Enter your bio'
+                                placeholderTextColor={`${placeholderColor}`}
+                                value={bio}
+                                onChangeText={setBio}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                            />
+                        </View>
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
                             <Text style={{
-                                fontSize: moderateScale(16),
-                                fontWeight: 'bold',
-                                color: primaryTextColor,
-                                marginTop: moderateScale(16)
+                                fontSize: moderateScale(14),
+                                fontWeight: '600',
+                                color: primaryTextColor
                             }}>
-                                Contact Information
+                                Resume
                             </Text>
-                            <View className='border border-neutral-200 rounded-lg' style={{ marginTop: moderateScale(8), padding: moderateScale(8), gap: moderateScale(8) }}>
-                                <View className='flex-row items-center'
-                                    style={{
-                                        gap: moderateScale(24),
-                                    }}>
-                                    <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), fontWeight: 'bold' }}>Email</Text>
-                                    <TextInput
-                                        placeholder='Email'
-                                        // value={email}
-                                        // onChangeText={setEmail}
-                                        style={{
-                                            fontSize: moderateScale(14),
-                                            color: primaryTextColor,
-                                            borderBottomWidth: moderateScale(1),
-                                            borderBottomColor: secondaryTextColor,
-                                            width: '80%',
-                                            alignSelf: 'center',
-                                        }}
-                                    />
-                                </View>
-                                <View className='flex-row items-center'
-                                    style={{
-                                        gap: moderateScale(24),
-                                    }}>
-                                    <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), fontWeight: 'bold' }}>Phone</Text>
-                                    <TextInput
-                                        placeholder='Phone'
-                                        // value={phone}
-                                        // onChangeText={setPhone}
-                                        style={{
-                                            fontSize: moderateScale(14),
-                                            color: primaryTextColor,
-                                            borderBottomWidth: moderateScale(1),
-                                            borderBottomColor: secondaryTextColor,
-                                            width: '80%',
-                                            alignSelf: 'center',
-                                        }}
-                                    />
-                                </View>
-                            </View>
+
+                            <TouchableOpacity
+                                onPress={pickResume}
+                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2'
+                            >
+                                <Text style={{ color: secondaryTextColor }}>
+                                    {resume?.name ? resume.name : "Select Resume (PDF/DOC)"}
+                                </Text>
+                            </TouchableOpacity>
                         </View>
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            style={{ backgroundColor: `${primaryColor}`, padding: moderateScale(10), borderRadius: moderateScale(10), marginTop: moderateScale(16) }}
+                        >
+                            <Text style={{ color: "white", fontSize: moderateScale(14), textAlign: 'center', }}>Update Profile</Text>
+                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </Modal>
