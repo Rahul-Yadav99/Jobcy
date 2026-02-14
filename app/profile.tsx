@@ -3,6 +3,7 @@ import BackButton from '@/components/BackButton';
 import EditButton from '@/components/EditButton';
 import ModalCloseButton from '@/components/ModalCloseButton';
 import SafeScreen from '@/components/SafeScreen';
+import { useAuth } from '@/contexts/AuthContext';
 import { profileService } from '@/services/profileService';
 import { placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
 import * as DocumentPicker from 'expo-document-picker';
@@ -13,6 +14,7 @@ import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, TextInput, To
 import { moderateScale } from 'react-native-size-matters';
 
 const Profile = () => {
+    const { logout } = useAuth();
     const [user, setUser] = useState<any>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [fullName, setFullName] = useState('');
@@ -229,6 +231,22 @@ const Profile = () => {
                             </TouchableOpacity>
                         )}
                     </View>
+                    <TouchableOpacity
+                        activeOpacity={0.5}
+                        onPress={logout}
+                        className='border border-neutral-200 rounded-lg'
+                        style={{
+                            marginTop: moderateScale(16),
+                            padding: moderateScale(10),
+                            borderRadius: moderateScale(10),
+                            alignItems: 'center',
+                            backgroundColor: primaryColor
+                        }}
+                    >
+                        <Text style={{ color: 'white', fontSize: moderateScale(14) }}>
+                            Logout
+                        </Text>
+                    </TouchableOpacity>
                     <View>
                         <Text
                             style={{
