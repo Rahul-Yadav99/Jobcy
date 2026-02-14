@@ -70,7 +70,6 @@ const Profile = () => {
             formData.append("college", collegeName);
 
             if (resume) {
-                console.log(resume);
                 formData.append("file", {
                     uri: resume.uri,
                     name: resume.name,
@@ -106,7 +105,7 @@ const Profile = () => {
         if (user) {
             setFullName(user.fullname || '');
             setEmail(user.email || '');
-            setPhoneNumber(user.phoneNumber || '');
+            setPhoneNumber(user.phoneNumber.toString() || '');
             setBio(user.profile?.bio || '');
             setCurrentCompanyName(user.profile?.currentCompany || '');
             setCollegeName(user.profile?.college || '');
@@ -253,14 +252,11 @@ const Profile = () => {
                                 }
                             ])}
                             className='rounded-lg bg-red-500'
-                            style={{
-                                marginTop: moderateScale(8),
-                                padding: moderateScale(12),
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                            }}
+                            activeOpacity={0.5}
+                            style={{ padding: moderateScale(10), borderRadius: moderateScale(10), marginTop: moderateScale(16), alignItems: 'center', justifyContent: 'space-between' }}
                         >
-                            <Text style={{ color: "white", fontSize: moderateScale(16) }}>
+                            <Text className='text-white text-center'
+                                style={{ fontSize: moderateScale(14) }}>
                                 Delete Account
                             </Text>
                         </TouchableOpacity>
@@ -334,13 +330,22 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>Phone Number</Text>
+                            <Text
+                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'
+                            >
+                                Phone Number
+                            </Text>
                             <TextInput
                                 placeholder='Enter your phone number'
-                                placeholderTextColor={`${placeholderColor}`}
+                                placeholderTextColor={placeholderColor}
                                 value={phoneNumber}
-                                onChangeText={setPhoneNumber}
+                                keyboardType="phone-pad"
+                                maxLength={10}
+                                onChangeText={(text) => {
+                                    const cleaned = text.replace(/[^0-9]/g, "");
+                                    setPhoneNumber(cleaned);
+                                }}
                                 className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
                             />
                         </View>
