@@ -1,3 +1,4 @@
+import studentApi from '@/api/student';
 import BackButton from '@/components/BackButton';
 import EditButton from '@/components/EditButton';
 import ModalCloseButton from '@/components/ModalCloseButton';
@@ -8,7 +9,7 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, Mail, Phone } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Profile = () => {
@@ -17,11 +18,11 @@ const Profile = () => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [skills, setSkills] = useState('');
     const [bio, setBio] = useState('');
     const [currentCompanyName, setCurrentCompanyName] = useState('');
     const [collegeName, setCollegeName] = useState('');
     const [resume, setResume] = useState<any>(null);
+    const [loading, setLoading] = useState(false);
 
     const loadUser = async () => {
         const user = await profileService.getUser();
@@ -57,22 +58,58 @@ const Profile = () => {
         }
     };
 
+    const handleUpdateProfile = async () => {
+        try {
+            setLoading(true);
+            const formData = new FormData();
+            formData.append("fullname", fullName);
+            formData.append("email", email);
+            formData.append("phoneNumber", phoneNumber);
+            formData.append("bio", bio);
+            formData.append("currentCompany", currentCompanyName);
+            formData.append("college", collegeName);
+
+            if (resume) {
+                console.log(resume);
+                formData.append("file", {
+                    uri: resume.uri,
+                    name: resume.name,
+                    type: resume.mimeType || "application/pdf",
+                } as any);
+            }
+
+            const response = await studentApi.updateProfile(formData);
+
+            if (response?.success) {
+                await profileService.saveUser(response.user);
+                Alert.alert("Success", response.message || "Profile updated successfully");
+                setModalVisible(false);
+                loadUser();
+            }
+
+        } catch (error: any) {
+            Alert.alert(
+                "Error",
+                error?.response?.data?.message || "Update failed"
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     useEffect(() => {
         loadUser();
     }, [])
 
     useEffect(() => {
         if (user) {
-            setFullName(user.fullname);
-            setEmail(user.email);
-            setPhoneNumber(user.phoneNumber);
-            setBio(user.profile.bio);
-            setCurrentCompanyName(user.profile.currentCompany);
-            setCollegeName(user.profile.college);
-        }
-
-        if (user?.profile?.skills) {
-            setSkills(user.profile.skills.join(", "));
+            setFullName(user.fullname || '');
+            setEmail(user.email || '');
+            setPhoneNumber(user.phoneNumber || '');
+            setBio(user.profile?.bio || '');
+            setCurrentCompanyName(user.profile?.currentCompany || '');
+            setCollegeName(user.profile?.college || '');
         }
     }, [user]);
     return (
@@ -152,23 +189,6 @@ const Profile = () => {
                         </View>
                     </View>
                     <View>
-                        <Text style={{
-                            fontSize: moderateScale(16),
-                            fontWeight: 'bold',
-                            color: primaryTextColor,
-                            marginTop: moderateScale(16)
-                        }}>
-                            Skills
-                        </Text>
-                        <View className='border border-neutral-200 rounded-lg' style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: moderateScale(8), padding: moderateScale(8), gap: moderateScale(8) }}>
-                            {user?.profile?.skills?.map((skill: string, index: number) => (
-                                <View key={index} className='bg-neutral-100' style={{ padding: moderateScale(8), borderRadius: moderateScale(8) }}>
-                                    <Text className='capitalize' style={{ color: secondaryTextColor, fontSize: moderateScale(10) }}>{skill}</Text>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                    <View>
                         <Text
                             style={{
                                 fontSize: moderateScale(16),
@@ -192,7 +212,7 @@ const Profile = () => {
                                 }}
                             >
                                 <Text style={{ color: secondaryTextColor }}>
-                                    {user?.profile?.resumeOriginalName || "View Resume"}
+                                    {user?.fullname + "_resume.pdf" || "View Resume"}
                                 </Text>
                             </TouchableOpacity>
                         ) : (
@@ -225,7 +245,6 @@ const Profile = () => {
                             onPress={() => Alert.alert("Delete Account", "Are you sure you want to delete your account?", [
                                 {
                                     text: "Cancel",
-                                    onPress: () => console.log("Cancel Pressed"),
                                     style: "cancel"
                                 },
                                 {
@@ -269,7 +288,8 @@ const Profile = () => {
                             alignSelf: 'center',
                         }} />
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Name</Text>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>Name</Text>
                             <TextInput
                                 placeholder='Enter your name'
                                 placeholderTextColor={`${placeholderColor}`}
@@ -280,7 +300,8 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Email</Text>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>Email</Text>
                             <TextInput
                                 placeholder='Enter your email'
                                 placeholderTextColor={`${placeholderColor}`}
@@ -291,7 +312,8 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>College</Text>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>College</Text>
                             <TextInput
                                 placeholder='Enter your college name'
                                 placeholderTextColor={`${placeholderColor}`}
@@ -301,7 +323,8 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Current Company</Text>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>Current Company</Text>
                             <TextInput
                                 placeholder='Enter your current company name'
                                 placeholderTextColor={`${placeholderColor}`}
@@ -311,7 +334,8 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Phone Number</Text>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>Phone Number</Text>
                             <TextInput
                                 placeholder='Enter your phone number'
                                 placeholderTextColor={`${placeholderColor}`}
@@ -321,17 +345,8 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Skills</Text>
-                            <TextInput
-                                placeholder='Enter your skills'
-                                placeholderTextColor={`${placeholderColor}`}
-                                value={skills}
-                                onChangeText={setSkills}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), fontWeight: 'semibold', color: primaryTextColor }}>Bio</Text>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>Bio</Text>
                             <TextInput
                                 placeholder='Enter your bio'
                                 placeholderTextColor={`${placeholderColor}`}
@@ -341,11 +356,8 @@ const Profile = () => {
                             />
                         </View>
                         <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{
-                                fontSize: moderateScale(14),
-                                fontWeight: '600',
-                                color: primaryTextColor
-                            }}>
+                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                className='font-semibold'>
                                 Resume
                             </Text>
 
@@ -359,10 +371,25 @@ const Profile = () => {
                             </TouchableOpacity>
                         </View>
                         <TouchableOpacity
+                            disabled={loading}
+                            onPress={handleUpdateProfile}
                             activeOpacity={0.5}
                             style={{ backgroundColor: `${primaryColor}`, padding: moderateScale(10), borderRadius: moderateScale(10), marginTop: moderateScale(16) }}
                         >
-                            <Text style={{ color: "white", fontSize: moderateScale(14), textAlign: 'center', }}>Update Profile</Text>
+                            {
+                                loading ? (
+                                    <ActivityIndicator
+                                        color={"white"}
+                                        size={'small'}
+                                    />
+                                ) : (
+                                    <Text
+                                        className='text-white text-center'
+                                        style={{ fontSize: moderateScale(14) }}
+                                    >Update Profile
+                                    </Text>
+                                )
+                            }
                         </TouchableOpacity>
                     </ScrollView>
                 </View>
