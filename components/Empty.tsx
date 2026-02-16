@@ -1,7 +1,8 @@
-import { secondaryTextColor } from '@/utils/colors'
+import { primaryTextColor } from '@/utils/colors'
 import React from 'react'
 import { Image, Text, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
+import BackButton from './BackButton'
 
 const Empty = ({ message }: { message: string }) => {
     return (
@@ -10,8 +11,10 @@ const Empty = ({ message }: { message: string }) => {
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
+                backgroundColor: 'white'
             }}
         >
+            <BackButton />
             <Image
                 source={require('@/assets/images/empty.png')}
                 style={{
@@ -20,7 +23,7 @@ const Empty = ({ message }: { message: string }) => {
                 }}
                 resizeMode='contain'
             />
-            <Text style={{ color: secondaryTextColor, fontSize: moderateScale(16) }}>{message}</Text>
+            <Text style={{ color: primaryTextColor, fontSize: moderateScale(16) }}>{message}</Text>
         </View>
     )
 }

@@ -1,5 +1,6 @@
 import studentApi from '@/api/student';
 import BackButton from '@/components/BackButton';
+import Empty from '@/components/Empty';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
 import { primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
@@ -65,18 +66,18 @@ const JobDetails = () => {
     // Error state
     if (error) {
         return (
-            <View className='flex-1 items-center justify-center'>
-                <Text>{error.message}</Text>
-            </View>
+            <Empty
+                message="Something went wrong"
+            />
         )
     }
 
     // Null check
     if (!data?.job) {
         return (
-            <View className='flex-1 items-center justify-center'>
-                <Text>Job not found</Text>
-            </View>
+            <Empty
+                message="Job not found"
+            />
         )
     }
 
