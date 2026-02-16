@@ -3,28 +3,42 @@ import React from 'react'
 import { Image, Text, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 import BackButton from './BackButton'
+import SafeScreen from './SafeScreen'
 
-const Empty = ({ message }: { message: string }) => {
+const Empty = ({ message, isDetailsScreen }: { message: string, isDetailsScreen?: boolean }) => {
     return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'white'
-            }}
-        >
-            <BackButton />
-            <Image
-                source={require('@/assets/images/empty.png')}
+        <SafeScreen>
+            {
+                isDetailsScreen && (
+                    <View
+                        style={{
+                            padding: moderateScale(16),
+                        }}
+                    >
+                        <BackButton />
+                    </View>
+                )
+            }
+            <View
                 style={{
-                    width: moderateScale(200),
-                    height: moderateScale(200),
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: 'white'
                 }}
-                resizeMode='contain'
-            />
-            <Text style={{ color: primaryTextColor, fontSize: moderateScale(16) }}>{message}</Text>
-        </View>
+            >
+                <Image
+                    source={require('@/assets/images/empty.png')}
+                    style={{
+                        width: moderateScale(200),
+                        height: moderateScale(200),
+                    }}
+                    resizeMode='contain'
+                />
+                <Text style={{ color: primaryTextColor, fontSize: moderateScale(16) }}>{message}</Text>
+            </View>
+        </SafeScreen>
+
     )
 }
 

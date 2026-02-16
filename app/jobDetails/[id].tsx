@@ -68,6 +68,7 @@ const JobDetails = () => {
         return (
             <Empty
                 message="Something went wrong"
+                isDetailsScreen
             />
         )
     }
@@ -77,6 +78,7 @@ const JobDetails = () => {
         return (
             <Empty
                 message="Job not found"
+                isDetailsScreen
             />
         )
     }

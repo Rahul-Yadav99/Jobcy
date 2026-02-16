@@ -18,7 +18,7 @@ const studentApi = {
 
     getJobDetails: async (id: string) => {
         try {
-            const response = await axios.get(`${JOB_API_END_POINT}/gdet/${id}`, {
+            const response = await axios.get(`${JOB_API_END_POINT}/get/${id}`, {
                 withCredentials: true,
                 headers: {
                     "Content-Type": "application/json"

@@ -28,7 +28,10 @@ const JobCardFlatList = () => {
 
     if (error) {
         return (
-            <Empty message='Failed to load jobs. Please try again.' />
+            <Empty
+                isDetailsScreen={false}
+                message='Failed to load jobs. Please try again.'
+            />
         );
     }
 
@@ -45,7 +48,10 @@ const JobCardFlatList = () => {
                 </>
             }
             ListEmptyComponent={
-                <Empty message='No jobs found' />
+                <Empty
+                    isDetailsScreen={false}
+                    message='No jobs found'
+                />
             }
             contentContainerStyle={{
                 flexGrow: 1,
