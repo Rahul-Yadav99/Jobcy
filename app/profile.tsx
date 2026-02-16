@@ -247,38 +247,6 @@ const Profile = () => {
                             Logout
                         </Text>
                     </TouchableOpacity>
-                    <View>
-                        <Text
-                            style={{
-                                fontSize: moderateScale(16),
-                                fontWeight: 'bold',
-                                color: primaryTextColor,
-                                marginTop: moderateScale(16)
-                            }}
-                        >
-                            Delete Account
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => Alert.alert("Delete Account", "Are you sure you want to delete your account?", [
-                                {
-                                    text: "Cancel",
-                                    style: "cancel"
-                                },
-                                {
-                                    text: "Delete",
-                                    onPress: () => Alert.alert("Request Accepted", "Your request to delete your account has been accepted. Your account will be deleted within 1 week.")
-                                }
-                            ])}
-                            className='rounded-lg bg-red-500'
-                            activeOpacity={0.5}
-                            style={{ padding: moderateScale(10), borderRadius: moderateScale(10), marginTop: moderateScale(16), alignItems: 'center', justifyContent: 'space-between' }}
-                        >
-                            <Text className='text-white text-center'
-                                style={{ fontSize: moderateScale(14) }}>
-                                Delete Account
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
                 </ScrollView>
             </View>
             <Modal
