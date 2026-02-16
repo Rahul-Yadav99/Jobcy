@@ -4,7 +4,7 @@ import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
 import { primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
 import { formatDate } from '@/utils/formateDate';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Briefcase, Calendar, IndianRupee, LaptopMinimal, MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -13,35 +13,47 @@ import { moderateScale } from 'react-native-size-matters';
 
 const JobDetails = () => {
     const { id: jobId } = useLocalSearchParams();
-    const [isApplied, setIsApplied] = useState(false);
     const [user, setUser] = useState<any>(null);
+    const queryClient = useQueryClient();
 
-    // MOVE loadUser function before useQuery
+    // Load user function
     const loadUser = async () => {
         const user = await profileService.getUser();
         setUser(user);
     }
 
-    // ALL HOOKS MUST BE AT THE TOP
+    // Query for job details
     const { data, isLoading, error } = useQuery({
         queryKey: ['job', jobId],
         queryFn: () => studentApi.getJobDetails(jobId as string)
     })
 
+    // Mutation for applying to job
+    const { mutateAsync: applyJob, isPending } = useMutation({
+        mutationFn: () => studentApi.applyJob(jobId as string),
+        onSuccess: () => {
+            // Invalidate and refetch the job details to get updated applications list
+            queryClient.invalidateQueries({ queryKey: ['job', jobId] });
+            console.log("Application successful");
+        },
+        onError: (error) => {
+            console.error("Application failed:", error);
+            alert("Failed to apply for job. Please try again.");
+        }
+    })
+
+    // Load user on mount
     useEffect(() => {
         loadUser();
     }, [])
 
-    useEffect(() => {
-        if (user && data?.job?.applications) {
-            const applied = data.job.applications.some(
-                (app: any) => app?.student?._id === user?._id
-            );
-            setIsApplied(applied);
-        }
-    }, [user, data]);
+    // Calculate isApplied from live data
+    const isApplied = React.useMemo(() => {
+        if (!user || !data?.job?.applications) return false;
+        return data.job.applications.some((app: any) => app.applicant === user?._id);
+    }, [user, data?.job?.applications]);
 
-    // NOW CONDITIONAL RETURNS AFTER ALL HOOKS
+    // Loading state
     if (isLoading) {
         return (
             <View className='flex-1 items-center justify-center'>
@@ -50,6 +62,7 @@ const JobDetails = () => {
         )
     }
 
+    // Error state
     if (error) {
         return (
             <View className='flex-1 items-center justify-center'>
@@ -58,7 +71,7 @@ const JobDetails = () => {
         )
     }
 
-    // ADD NULL CHECK
+    // Null check
     if (!data?.job) {
         return (
             <View className='flex-1 items-center justify-center'>
@@ -82,7 +95,7 @@ const JobDetails = () => {
                     <Text
                         className='capitalize'
                         style={{
-                            flex: 1, // Changed from width: '100%'
+                            flex: 1,
                             fontSize: moderateScale(20),
                             fontWeight: 'bold',
                             color: primaryTextColor,
@@ -96,7 +109,7 @@ const JobDetails = () => {
                     showsVerticalScrollIndicator={false}
                     bounces={false}
                     contentContainerStyle={{
-                        paddingBottom: moderateScale(20) // REMOVED flex: 1
+                        paddingBottom: moderateScale(20)
                     }}
                 >
                     <View
@@ -315,24 +328,24 @@ const JobDetails = () => {
                         </Text>
                     </View>
                     <TouchableOpacity
-                        activeOpacity={0.9}
-                        disabled={isApplied} // Disable if already applied
+                        disabled={isApplied || isPending}
+                        onPress={async () => {
+                            try {
+                                await applyJob();
+                            } catch (error) {
+                                console.error("Error applying:", error);
+                            }
+                        }}
                         style={{
                             marginTop: moderateScale(10),
-                            backgroundColor: isApplied ? '#ccc' : primaryColor,
+                            backgroundColor: isApplied || isPending ? '#ccc' : primaryColor,
                             padding: moderateScale(10),
                             borderRadius: moderateScale(10),
                             alignItems: 'center',
                         }}
                     >
-                        <Text
-                            style={{
-                                fontSize: moderateScale(14),
-                                color: "white",
-                                fontWeight: 'bold',
-                            }}
-                        >
-                            {isApplied ? "Already Applied" : "Apply for this job"}
+                        <Text style={{ color: '#fff', fontSize: moderateScale(16) }}>
+                            {isPending ? "Applying..." : isApplied ? "Already Applied" : "Apply for this job"}
                         </Text>
                     </TouchableOpacity>
                 </ScrollView>
