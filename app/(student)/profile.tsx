@@ -8,7 +8,7 @@ import { profileService } from '@/services/profileService';
 import { placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
 import * as DocumentPicker from 'expo-document-picker';
 import * as WebBrowser from 'expo-web-browser';
-import { Briefcase, GraduationCap, Mail, Phone } from 'lucide-react-native';
+import { Briefcase, GraduationCap, LogOut, Mail, Phone } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
@@ -243,9 +243,12 @@ const Profile = () => {
                             backgroundColor: primaryColor
                         }}
                     >
-                        <Text style={{ color: 'white', fontSize: moderateScale(14) }}>
-                            Logout
-                        </Text>
+                        <View className='flex-row items-center gap-2'>
+                            <LogOut size={moderateScale(16)} color="white" />
+                            <Text style={{ color: 'white', fontSize: moderateScale(14) }}>
+                                Logout
+                            </Text>
+                        </View>
                     </TouchableOpacity>
                 </ScrollView>
             </View>
