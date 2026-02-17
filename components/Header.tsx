@@ -1,10 +1,10 @@
-import { useAuth } from '@/contexts/AuthContext'
 import { useProfile } from '@/hooks/useProfile'
 import { primaryTextColor, secondaryTextColor } from '@/utils/colors'
-import React from 'react'
-import { Image, Text, TouchableOpacity, View } from 'react-native'
-import { moderateScale } from 'react-native-size-matters'
 import { useRouter } from 'expo-router'
+import { Bell } from 'lucide-react-native'
+import React from 'react'
+import { Text, TouchableOpacity, View } from 'react-native'
+import { moderateScale } from 'react-native-size-matters'
 
 const Header = () => {
     const router = useRouter();
@@ -30,13 +30,11 @@ const Header = () => {
             </View>
 
             <TouchableOpacity
+                className='bg-neutral-100 rounded-full p-2'
                 activeOpacity={0.9}
-                onPress={() => router.push('/profile')}
+                onPress={() => router.push('/notification')}
             >
-                <Image
-                    source={require('@/assets/images/profile.png')}
-                    style={{ width: moderateScale(40), height: moderateScale(40), borderRadius: moderateScale(20) }}
-                />
+                <Bell size={moderateScale(24)} color={primaryTextColor} />
             </TouchableOpacity>
         </View>
     )
