@@ -43,7 +43,7 @@ const StudentLayout = () => {
             <Tabs.Screen
                 name='appliedJobs'
                 options={{
-                    title: 'Applied Jobs',
+                    title: 'My Jobs',
                     tabBarIcon: ({ color }) => (
                         <Newspaper size={moderateScale(20)} color={color} />
                     )
