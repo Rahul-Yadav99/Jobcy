@@ -35,7 +35,7 @@ const Empty = ({ message, isDetailsScreen }: { message: string, isDetailsScreen?
                     }}
                     resizeMode='contain'
                 />
-                <Text style={{ color: primaryTextColor, fontSize: moderateScale(16) }}>{message}</Text>
+                <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), textAlign: 'center' }}>{message}</Text>
             </View>
         </SafeScreen>
 
