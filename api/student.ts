@@ -1,4 +1,4 @@
-import { APPLICATION_API_END_POINT, JOB_API_END_POINT, USER_API_END_POINT } from "@/utils/constant"
+import { APPLICATION_API_END_POINT, BASE_API_END_POINT, JOB_API_END_POINT, USER_API_END_POINT } from "@/utils/constant"
 import axios from "axios"
 
 const studentApi = {
@@ -34,6 +34,20 @@ const studentApi = {
         console.log("id", id)
         try {
             const response = await axios.get(`${APPLICATION_API_END_POINT}/apply/${id}`, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    getStudentDashboardData: async () => {
+        try {
+            const response = await axios.get(`${BASE_API_END_POINT}/student/dashboard`, {
                 withCredentials: true,
                 headers: {
                     "Content-Type": "application/json"
