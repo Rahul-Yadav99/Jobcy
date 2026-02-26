@@ -1,4 +1,5 @@
 import studentApi from '@/api/student'
+import Header from '@/components/Header'
 import SafeScreen from '@/components/SafeScreen'
 import { primaryColor } from '@/utils/colors'
 import { useQuery } from '@tanstack/react-query'
@@ -7,7 +8,7 @@ import {
     ActivityIndicator,
     Animated,
     Dimensions,
-    FlatList,
+    ScrollView,
     StyleSheet,
     Text,
     View,
@@ -36,8 +37,8 @@ const COLOR = {
 
 const STATUS_MAP: Record<string, { color: string; bg: string; label: string }> = {
     accepted: { color: COLOR.accepted, bg: '#D1FAE5', label: 'Accepted' },
-    pending:  { color: COLOR.pending,  bg: '#FEF3C7', label: 'Pending'  },
-    viewed:   { color: COLOR.viewed,   bg: '#DBEAFE', label: 'Viewed'   },
+    pending: { color: COLOR.pending, bg: '#FEF3C7', label: 'Pending' },
+    viewed: { color: COLOR.viewed, bg: '#DBEAFE', label: 'Viewed' },
     rejected: { color: COLOR.rejected, bg: '#FEE2E2', label: 'Rejected' },
 }
 
@@ -107,39 +108,6 @@ const ChartCard: React.FC<{
     </View>
 )
 
-// ─── Job Card ─────────────────────────────────────────────────────────────────
-const JobCard: React.FC<{ item: any; index: number }> = ({ item, index }) => {
-    const anim = useRef(new Animated.Value(0)).current
-    const status = STATUS_MAP[item.status] ?? { color: '#6B7280', bg: '#F3F4F6', label: item.status }
-    useEffect(() => {
-        Animated.timing(anim, { toValue: 1, duration: 400, delay: index * 50, useNativeDriver: true }).start()
-    }, [])
-    return (
-        <Animated.View style={[
-            styles.jobCard,
-            {
-                borderLeftColor: status.color,
-                opacity: anim,
-                transform: [{ translateX: anim.interpolate({ inputRange: [0, 1], outputRange: [20, 0] }) }],
-            },
-        ]}>
-            <View style={styles.jobCardInner}>
-                <View style={styles.jobCardLeft}>
-                    <Text style={styles.jobTitle} numberOfLines={1}>
-                        {item.jobTitle ?? 'Untitled Position'}
-                    </Text>
-                    <Text style={styles.jobCompany} numberOfLines={1}>
-                        {item.companyName ?? 'Unknown Company'}
-                    </Text>
-                    <Text style={styles.jobDate}>Applied {item.appliedAt}</Text>
-                </View>
-                <View style={[styles.statusBadge, { backgroundColor: status.bg }]}>
-                    <Text style={[styles.statusText, { color: status.color }]}>{status.label}</Text>
-                </View>
-            </View>
-        </Animated.View>
-    )
-}
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 const StudentHome: React.FC = () => {
@@ -158,6 +126,7 @@ const StudentHome: React.FC = () => {
     if (isLoading) {
         return (
             <SafeScreen>
+                <Header />
                 <View style={styles.centered}>
                     <ActivityIndicator size="large" color={primaryColor} />
                     <Text style={styles.loadingText}>Loading dashboard…</Text>
@@ -188,17 +157,17 @@ const StudentHome: React.FC = () => {
         ? ((summary.accepted / summary.totalApplications) * 100).toFixed(1)
         : '0.0'
 
-    const jobBreakdown: any[] = data?.jobBreakdown ?? []
+    // const jobBreakdown: any[] = data?.jobBreakdown ?? [] // Removed as per request
 
     // API returns newest-first → slice 7 → reverse for chronological left-to-right
     const applicationsPerDay: any[] = [...(data?.graphs?.applicationsPerDay ?? [])].slice(0, 7).reverse()
-    const jobsPostedPerDay: any[]   = [...(data?.graphs?.jobsPostedPerDay   ?? [])].slice(0, 7).reverse()
+    const jobsPostedPerDay: any[] = [...(data?.graphs?.jobsPostedPerDay ?? [])].slice(0, 7).reverse()
 
-    const appLabels  = applicationsPerDay.length > 0 ? applicationsPerDay.map(d => formatDayLabel(d.date)) : ['--']
-    const appValues  = safeChartData(applicationsPerDay.map(d => d.applications))
+    const appLabels = applicationsPerDay.length > 0 ? applicationsPerDay.map(d => formatDayLabel(d.date)) : ['--']
+    const appValues = safeChartData(applicationsPerDay.map(d => d.applications))
 
-    const jobLabels  = jobsPostedPerDay.length > 0 ? jobsPostedPerDay.map(d => formatDayLabel(d.date)) : ['--']
-    const jobValues  = safeChartData(jobsPostedPerDay.map(d => d.jobs))
+    const jobLabels = jobsPostedPerDay.length > 0 ? jobsPostedPerDay.map(d => formatDayLabel(d.date)) : ['--']
+    const jobValues = safeChartData(jobsPostedPerDay.map(d => d.jobs))
 
     const applicationChartData = {
         labels: appLabels,
@@ -220,10 +189,10 @@ const StudentHome: React.FC = () => {
 
     // Filter zero slices — pie chart also crashes with all-zero data
     const statusPieData = [
-        { name: 'Accepted', population: summary.accepted,  color: COLOR.accepted, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-        { name: 'Pending',  population: summary.pending,   color: COLOR.pending,  legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-        { name: 'Viewed',   population: summary.viewed,    color: COLOR.viewed,   legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-        { name: 'Rejected', population: summary.rejected,  color: COLOR.rejected, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
+        { name: 'Accepted', population: summary.accepted, color: COLOR.accepted, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
+        { name: 'Pending', population: summary.pending, color: COLOR.pending, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
+        { name: 'Viewed', population: summary.viewed, color: COLOR.viewed, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
+        { name: 'Rejected', population: summary.rejected, color: COLOR.rejected, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
     ].filter(d => d.population > 0)
 
     const BASE_LINE_CONFIG = {
@@ -235,120 +204,101 @@ const StudentHome: React.FC = () => {
         propsForBackgroundLines: { stroke: '#F1F2F7', strokeDasharray: '' },
     }
 
-    // ── List Header ────────────────────────────────────────────────────────────
-    const ListHeader = (
-        <View style={styles.headerWrapper}>
-            {/* Page Title */}
-            <Animated.View style={{
-                opacity: headerAnim,
-                transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
-            }}>
-                <Text style={styles.pageTitle}>Dashboard</Text>
-                <Text style={styles.pageSubtitle}>Your application overview</Text>
-            </Animated.View>
-
-            {/* Summary Stats */}
-            <View style={styles.statsSection}>
-                <SectionHeader title="Summary" />
-                <View style={styles.statsGrid}>
-                    <StatCard label="Total"    value={summary.totalApplications} color={COLOR.accent}   delay={0}   />
-                    <StatCard label="Pending"  value={summary.pending}           color={COLOR.pending}  delay={60}  />
-                    <StatCard label="Accepted" value={summary.accepted}          color={COLOR.accepted} delay={120} />
-                    <StatCard label="Viewed"   value={summary.viewed}            color={COLOR.viewed}   delay={180} />
-                    <StatCard label="Rejected" value={summary.rejected}          color={COLOR.rejected} delay={240} />
-                    <StatCard label="Success"  value={`${successRate}%`}         color={COLOR.success}  delay={300} />
-                </View>
-            </View>
-
-            {/* Status Distribution Pie */}
-            {statusPieData.length > 0 && (
-                <ChartCard title="Status Distribution" accentColor={COLOR.accent}>
-                    <PieChart
-                        data={statusPieData}
-                        width={CHART_WIDTH}
-                        height={200}
-                        chartConfig={{ color: (opacity = 1) => `rgba(0,0,0,${opacity})` }}
-                        accessor="population"
-                        backgroundColor="transparent"
-                        paddingLeft="12"
-                        absolute
-                        style={styles.chart}
-                    />
-                </ChartCard>
-            )}
-
-            {/* Applications Per Day */}
-            <ChartCard title="Applications Per Day" subtitle="Last 7 days" accentColor={COLOR.accent}>
-                <LineChart
-                    data={applicationChartData}
-                    width={CHART_WIDTH}
-                    height={200}
-                    chartConfig={{
-                        ...BASE_LINE_CONFIG,
-                        color: (opacity = 1) => `rgba(59,130,246,${opacity})`,
-                        propsForDots: { r: '4', strokeWidth: '2', stroke: COLOR.accent },
-                    }}
-                    bezier
-                    withInnerLines
-                    withOuterLines={false}
-                    withShadow={false}
-                    // Hide y-axis labels when all values are effectively 0
-                    formatYLabel={(val) => {
-                        const n = parseFloat(val)
-                        return n < 0.01 ? '0' : String(Math.round(n))
-                    }}
-                    style={styles.chart}
-                />
-            </ChartCard>
-
-            {/* Jobs Posted Per Day */}
-            <ChartCard title="Jobs Posted Per Day" subtitle="Last 7 days" accentColor={COLOR.jobs}>
-                <LineChart
-                    data={jobsChartData}
-                    width={CHART_WIDTH}
-                    height={200}
-                    chartConfig={{
-                        ...BASE_LINE_CONFIG,
-                        color: (opacity = 1) => `rgba(249,115,22,${opacity})`,
-                        propsForDots: { r: '4', strokeWidth: '2', stroke: COLOR.jobs },
-                    }}
-                    bezier
-                    withInnerLines
-                    withOuterLines={false}
-                    withShadow={false}
-                    formatYLabel={(val) => {
-                        const n = parseFloat(val)
-                        return n < 0.01 ? '0' : String(Math.round(n))
-                    }}
-                    style={styles.chart}
-                />
-            </ChartCard>
-
-            {/* Job List Header */}
-            <SectionHeader
-                title="Job Applications"
-                subtitle={`${jobBreakdown.length} total`}
-            />
-        </View>
-    )
-
     return (
         <SafeScreen>
-            <FlatList
-                data={jobBreakdown}
-                keyExtractor={(_, index) => index.toString()}
-                renderItem={({ item, index }) => <JobCard item={item} index={index} />}
+            <Header />
+            <ScrollView
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
-                ListHeaderComponent={ListHeader}
-                ListEmptyComponent={
-                    <View style={styles.emptyState}>
-                        <Text style={styles.emptyIcon}>📋</Text>
-                        <Text style={styles.emptyTitle}>No applications yet</Text>
-                        <Text style={styles.emptyText}>Start applying to jobs and track your progress here.</Text>
+            >
+                <View style={styles.headerWrapper}>
+                    {/* Page Title */}
+                    <Animated.View style={{
+                        opacity: headerAnim,
+                        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
+                    }}>
+                        <Text style={styles.pageTitle}>Dashboard</Text>
+                        <Text style={styles.pageSubtitle}>Your application overview</Text>
+                    </Animated.View>
+
+                    {/* Summary Stats */}
+                    <View style={styles.statsSection}>
+                        <SectionHeader title="Summary" />
+                        <View style={styles.statsGrid}>
+                            <StatCard label="Total" value={summary.totalApplications} color={COLOR.accent} delay={0} />
+                            <StatCard label="Pending" value={summary.pending} color={COLOR.pending} delay={60} />
+                            <StatCard label="Accepted" value={summary.accepted} color={COLOR.accepted} delay={120} />
+                            <StatCard label="Viewed" value={summary.viewed} color={COLOR.viewed} delay={180} />
+                            <StatCard label="Rejected" value={summary.rejected} color={COLOR.rejected} delay={240} />
+                            <StatCard label="Success" value={`${successRate}%`} color={COLOR.success} delay={300} />
+                        </View>
                     </View>
-                }
-            />
+
+                    {/* Status Distribution Pie */}
+                    {statusPieData.length > 0 && (
+                        <ChartCard title="Status Distribution" accentColor={COLOR.accent}>
+                            <PieChart
+                                data={statusPieData}
+                                width={CHART_WIDTH}
+                                height={200}
+                                chartConfig={{ color: (opacity = 1) => `rgba(0,0,0,${opacity})` }}
+                                accessor="population"
+                                backgroundColor="transparent"
+                                paddingLeft="12"
+                                absolute
+                                style={styles.chart}
+                            />
+                        </ChartCard>
+                    )}
+
+                    {/* Applications Per Day */}
+                    <ChartCard title="Applications Per Day" subtitle="Last 7 days" accentColor={COLOR.accent}>
+                        <LineChart
+                            data={applicationChartData}
+                            width={CHART_WIDTH}
+                            height={200}
+                            chartConfig={{
+                                ...BASE_LINE_CONFIG,
+                                color: (opacity = 1) => `rgba(59,130,246,${opacity})`,
+                                propsForDots: { r: '4', strokeWidth: '2', stroke: COLOR.accent },
+                            }}
+                            bezier
+                            withInnerLines
+                            withOuterLines={false}
+                            withShadow={false}
+                            // Hide y-axis labels when all values are effectively 0
+                            formatYLabel={(val) => {
+                                const n = parseFloat(val)
+                                return n < 0.01 ? '0' : String(Math.round(n))
+                            }}
+                            style={styles.chart}
+                        />
+                    </ChartCard>
+
+                    {/* Jobs Posted Per Day */}
+                    <ChartCard title="Jobs Posted Per Day" subtitle="Last 7 days" accentColor={COLOR.jobs}>
+                        <LineChart
+                            data={jobsChartData}
+                            width={CHART_WIDTH}
+                            height={200}
+                            chartConfig={{
+                                ...BASE_LINE_CONFIG,
+                                color: (opacity = 1) => `rgba(249,115,22,${opacity})`,
+                                propsForDots: { r: '4', strokeWidth: '2', stroke: COLOR.jobs },
+                            }}
+                            bezier
+                            withInnerLines
+                            withOuterLines={false}
+                            withShadow={false}
+                            formatYLabel={(val) => {
+                                const n = parseFloat(val)
+                                return n < 0.01 ? '0' : String(Math.round(n))
+                            }}
+                            style={styles.chart}
+                        />
+                    </ChartCard>
+                </View>
+            </ScrollView>
         </SafeScreen>
     )
 }
@@ -414,60 +364,6 @@ const styles = StyleSheet.create({
     },
     sectionTitle: { fontSize: 16, fontWeight: '700', color: COLOR.textPrimary, letterSpacing: -0.2 },
     sectionSubtitle: { fontSize: 12, color: COLOR.textMuted, fontWeight: '500' },
-
-    jobCard: {
-        backgroundColor: COLOR.surface,
-        marginHorizontal: 20,
-        marginBottom: 10,
-        borderRadius: 14,
-        borderLeftWidth: 4,
-        borderWidth: 1,
-        borderColor: COLOR.border,
-        shadowColor: '#000',
-        shadowOpacity: 0.03,
-        shadowRadius: 6,
-        shadowOffset: { width: 0, height: 1 },
-        elevation: 1,
-        overflow: 'hidden',
-    },
-    jobCardInner: {
-        flexDirection: 'row', justifyContent: 'space-between',
-        alignItems: 'center', padding: 14,
-    },
-    jobCardLeft: { flex: 1, marginRight: 12 },
-    jobTitle: { fontSize: 14, fontWeight: '700', color: COLOR.textPrimary },
-    jobCompany: { fontSize: 13, color: COLOR.textSecondary, marginTop: 2 },
-    jobDate: { fontSize: 11, color: COLOR.textMuted, marginTop: 4 },
-    statusBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 20 },
-    statusText: { fontSize: 11, fontWeight: '700', textTransform: 'capitalize' },
-
-    emptyState: { alignItems: 'center', paddingVertical: 48, paddingHorizontal: 32 },
-    emptyIcon: { fontSize: 40, marginBottom: 12 },
-    emptyTitle: { fontSize: 17, fontWeight: '700', color: COLOR.textPrimary, marginBottom: 6 },
-    emptyText: { fontSize: 14, color: COLOR.textMuted, textAlign: 'center', lineHeight: 20 },
 })
 
 export default StudentHome
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
