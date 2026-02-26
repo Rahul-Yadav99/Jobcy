@@ -5,7 +5,7 @@ import HeaderCard from '@/components/HeaderCard';
 import JobCard from '@/components/JobCard';
 import Recommended from '@/components/Recommended';
 import SafeScreen from '@/components/SafeScreen';
-import { primaryColor } from '@/utils/colors';
+import { primaryColor, secondaryTextColor } from '@/utils/colors';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
@@ -28,6 +28,14 @@ const Home = () => {
                 <HeaderCard />
                 <View className='flex-1 items-center justify-center'>
                     <ActivityIndicator size={moderateScale(30)} color={primaryColor} />
+                    <Text
+                        style={{
+                            fontSize: moderateScale(12),
+                            color: secondaryTextColor,
+                            fontWeight: 'semibold',
+                            marginTop: moderateScale(10),
+                        }}
+                    >Loading jobs...</Text>
                 </View>
             </SafeScreen>
         );
