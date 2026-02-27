@@ -11,7 +11,7 @@ const Header = () => {
     const { user } = useProfile();
     return (
         <View
-            className='flex-row items-center justify-between border-b border-neutral-300'
+            className='flex-row items-center justify-between border-b border-neutral-200'
             style={{ height: moderateScale(60), paddingHorizontal: moderateScale(20) }}
         >
             <View>
