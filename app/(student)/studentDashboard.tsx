@@ -1,7 +1,7 @@
 import studentApi from '@/api/student'
 import Header from '@/components/Header'
 import SafeScreen from '@/components/SafeScreen'
-import { primaryColor } from '@/utils/colors'
+import { primaryColor } from '@/utils/theme'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useRef } from 'react'
 import {

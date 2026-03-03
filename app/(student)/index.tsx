@@ -5,7 +5,7 @@ import HeaderCard from '@/components/HeaderCard';
 import JobCard from '@/components/JobCard';
 import Recommended from '@/components/Recommended';
 import SafeScreen from '@/components/SafeScreen';
-import { primaryColor, secondaryTextColor } from '@/utils/colors';
+import { primaryColor, secondaryTextColor } from '@/utils/theme';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';

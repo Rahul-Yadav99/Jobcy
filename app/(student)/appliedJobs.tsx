@@ -3,7 +3,7 @@ import AppliedJobCard from '@/components/AppliedJobCard'
 import Empty from '@/components/Empty'
 import Header from '@/components/Header'
 import SafeScreen from '@/components/SafeScreen'
-import { primaryColor, primaryTextColor } from '@/utils/colors'
+import { primaryColor, primaryTextColor } from '@/utils/theme'
 import { useQuery } from '@tanstack/react-query'
 import React, { useCallback } from 'react'
 import {

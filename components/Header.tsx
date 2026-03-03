@@ -1,5 +1,5 @@
 import { useProfile } from '@/hooks/useProfile'
-import { primaryTextColor, secondaryTextColor } from '@/utils/colors'
+import { primaryTextColor, secondaryTextColor } from '@/utils/theme'
 import { useRouter } from 'expo-router'
 import { Bell } from 'lucide-react-native'
 import React from 'react'

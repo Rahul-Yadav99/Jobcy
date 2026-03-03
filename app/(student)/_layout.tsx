@@ -1,4 +1,4 @@
-import { disabledColor, primaryColor } from '@/utils/colors'
+import { disabledColor, primaryColor } from '@/utils/theme'
 import { Tabs } from 'expo-router'
 import { Home, LayoutDashboard, Newspaper } from 'lucide-react-native'
 import React from 'react'
@@ -59,9 +59,9 @@ const StudentLayout = () => {
                             style={{
                                 height: moderateScale(26),
                                 width: moderateScale(26),
-                                borderRadius: moderateScale(13), 
+                                borderRadius: moderateScale(13),
                                 opacity: focused ? 1 : 0.6,
-                                borderWidth: focused ? 2 : 0,   
+                                borderWidth: focused ? 2 : 0,
                                 borderColor: primaryColor,
                             }}
                             resizeMode="cover"

@@ -5,7 +5,7 @@ import ModalCloseButton from '@/components/ModalCloseButton';
 import SafeScreen from '@/components/SafeScreen';
 import { useAuth } from '@/contexts/AuthContext';
 import { profileService } from '@/services/profileService';
-import { placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/colors';
+import { placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
 import * as DocumentPicker from 'expo-document-picker';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, LogOut, Mail, Phone } from 'lucide-react-native';

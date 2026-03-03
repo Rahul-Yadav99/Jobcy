@@ -1,5 +1,5 @@
 import jobApi from '@/api/job';
-import { primaryColor } from '@/utils/colors';
+import { primaryColor } from '@/utils/theme';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { ActivityIndicator, FlatList, View } from 'react-native';

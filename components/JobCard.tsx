@@ -1,5 +1,5 @@
-import { primaryTextColor, secondaryTextColor } from '@/utils/colors'
 import { formatDate } from '@/utils/formateDate'
+import { primaryTextColor, secondaryTextColor } from '@/utils/theme'
 import { useRouter } from 'expo-router'
 import { Calendar, IndianRupee, MapPin } from 'lucide-react-native'
 import React from 'react'

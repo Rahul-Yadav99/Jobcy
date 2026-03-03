@@ -1,13 +1,13 @@
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { useRole } from '@/hooks/useRole'
-import { primaryColor } from '@/utils/colors'
+import { primaryColor } from '@/utils/theme'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
 import { ActivityIndicator, View } from 'react-native'
-import '../global.css'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import '../global.css'
 
 const queryClient = new QueryClient()
 

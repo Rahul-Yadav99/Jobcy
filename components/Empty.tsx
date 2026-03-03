@@ -1,4 +1,4 @@
-import { primaryTextColor } from '@/utils/colors'
+import { primaryTextColor } from '@/utils/theme'
 import React from 'react'
 import { Image, Text, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
