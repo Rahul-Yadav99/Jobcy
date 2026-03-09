@@ -1,4 +1,5 @@
-import { primaryTextColor, secondaryTextColor } from '@/utils/theme'
+import { secondaryTextColor } from '@/utils/theme'
+import { typography } from '@/utils/typography'
 import React from 'react'
 import { Text, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
@@ -13,14 +14,12 @@ const Recommended = () => {
         >
             <View>
                 <Text
-                    className='font-bold'
-                    style={{ color: primaryTextColor, fontSize: moderateScale(16) }}
+                    style={typography.h1}
                 >
                     Recommended for you
                 </Text>
                 <Text
-                    className='text-sm'
-                    style={{ color: secondaryTextColor }}
+                   style={typography.body}
                 >
                     as per your preferences
                 </Text>

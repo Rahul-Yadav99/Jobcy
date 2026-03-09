@@ -23,18 +23,18 @@ export const spacing = {
 };
 
 export const fontSize = {
-    xs: moderateScale(12),
-    sm: moderateScale(14),
-    md: moderateScale(16),
-    lg: moderateScale(18),
-    xl: moderateScale(22),
-    xxl: moderateScale(26),
+    xs: moderateScale(10),
+    sm: moderateScale(12),
+    md: moderateScale(14),
+    lg: moderateScale(16),
+    xl: moderateScale(18),
+    xxl: moderateScale(20),
 };
 
 export const headingSize = {
-    h1: moderateScale(32),
-    h2: moderateScale(28),
-    h3: moderateScale(24),
-    h4: moderateScale(20),
-    h5: moderateScale(18),
+    h1: moderateScale(18),
+    h2: moderateScale(16),
+    h3: moderateScale(14),
+    h4: moderateScale(12),
+    h5: moderateScale(10),
 };
