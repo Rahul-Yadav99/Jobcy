@@ -14,7 +14,7 @@ const Recommended = () => {
         >
             <View>
                 <Text
-                    style={typography.h1}
+                    style={typography.h3}
                 >
                     Recommended for you
                 </Text>

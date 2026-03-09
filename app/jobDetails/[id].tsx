@@ -4,7 +4,7 @@ import Empty from '@/components/Empty';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
 import { formatDate } from '@/utils/formateDate';
-import { primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
+import { colors, fontSize, headingSize, primaryColor, primaryTextColor, spacing } from '@/utils/theme';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Briefcase, Calendar, IndianRupee, LaptopMinimal, MapPin } from 'lucide-react-native';
@@ -99,10 +99,10 @@ const JobDetails = () => {
                         className='capitalize'
                         style={{
                             flex: 1,
-                            fontSize: moderateScale(20),
+                            fontSize: headingSize.h2,
                             fontWeight: 'bold',
-                            color: primaryTextColor,
-                            marginLeft: moderateScale(16),
+                            color: colors.primaryTextColor,
+                            marginLeft: spacing.md,
                         }}
                     >
                         {job.title || "No title available"}
@@ -118,8 +118,8 @@ const JobDetails = () => {
                     <View
                         className='flex-row items-center'
                         style={{
-                            marginTop: moderateScale(10),
-                            gap: moderateScale(10)
+                            marginTop: spacing.md,
+                            gap: spacing.md,
                         }}
                     >
                         <Image
@@ -134,9 +134,9 @@ const JobDetails = () => {
                         <Text
                             className='capitalize'
                             style={{
-                                fontSize: moderateScale(16),
+                                fontSize: headingSize.h3,
                                 fontWeight: 'bold',
-                                color: primaryTextColor,
+                                color: colors.primaryTextColor,
                             }}
                         >
                             {job.company?.name || "No company name available"}
@@ -144,9 +144,9 @@ const JobDetails = () => {
                     </View>
                     <Text
                         style={{
-                            fontSize: moderateScale(13),
-                            color: secondaryTextColor,
-                            marginTop: moderateScale(10),
+                            fontSize: fontSize.md,
+                            color: colors.secondaryTextColor,
+                            marginTop: spacing.md,
                             textAlign: 'justify',
                         }}
                     >
@@ -155,14 +155,14 @@ const JobDetails = () => {
                     <View>
                         <View className='flex-row items-center'
                             style={{
-                                marginTop: moderateScale(10),
-                                gap: moderateScale(4)
+                                marginTop: spacing.md,
+                                gap: spacing.sm
                             }}
                         >
                             <IndianRupee size={moderateScale(18)} color={primaryTextColor} />
                             <Text
                                 style={{
-                                    fontSize: moderateScale(14),
+                                    fontSize: fontSize.md,
                                     fontWeight: 'bold',
                                     color: primaryTextColor,
                                 }}
@@ -172,14 +172,14 @@ const JobDetails = () => {
                         </View>
                         <View className='flex-row items-center'
                             style={{
-                                marginTop: moderateScale(10),
-                                gap: moderateScale(4)
+                                marginTop: spacing.md,
+                                gap: spacing.sm
                             }}
                         >
                             <MapPin size={moderateScale(18)} color={primaryTextColor} />
                             <Text
                                 style={{
-                                    fontSize: moderateScale(14),
+                                    fontSize: fontSize.md,
                                     fontWeight: 'bold',
                                     color: primaryTextColor,
                                 }}
@@ -189,14 +189,14 @@ const JobDetails = () => {
                         </View>
                         <View className='flex-row items-center'
                             style={{
-                                marginTop: moderateScale(10),
-                                gap: moderateScale(4)
+                                marginTop: spacing.md,
+                                gap: spacing.sm
                             }}
                         >
                             <Briefcase size={moderateScale(18)} color={primaryTextColor} />
                             <Text
                                 style={{
-                                    fontSize: moderateScale(14),
+                                    fontSize: fontSize.md,
                                     fontWeight: 'bold',
                                     color: primaryTextColor,
                                 }}
@@ -209,8 +209,8 @@ const JobDetails = () => {
                                 <View
                                     className='flex-row items-center'
                                     style={{
-                                        marginTop: moderateScale(10),
-                                        gap: moderateScale(4),
+                                        marginTop: spacing.md,
+                                        gap: spacing.sm,
                                     }}
                                 >
                                     <LaptopMinimal
@@ -219,7 +219,7 @@ const JobDetails = () => {
                                     />
                                     <Text
                                         style={{
-                                            fontSize: moderateScale(14),
+                                            fontSize: fontSize.md,
                                             fontWeight: 'bold',
                                             color: primaryTextColor,
                                         }}
@@ -232,9 +232,9 @@ const JobDetails = () => {
                     </View>
                     <Text
                         style={{
-                            fontSize: moderateScale(13),
-                            color: secondaryTextColor,
-                            marginTop: moderateScale(16),
+                            fontSize: fontSize.md,
+                            color: colors.secondaryTextColor,
+                            marginTop: spacing.md,
                             lineHeight: moderateScale(20),
                             textAlign: 'justify',
                         }}
@@ -243,14 +243,14 @@ const JobDetails = () => {
                     </Text>
                     <View className='flex-row items-center'
                         style={{
-                            gap: moderateScale(4),
-                            marginTop: moderateScale(10),
+                            gap: spacing.sm,
+                            marginTop: spacing.md,
                         }}
                     >
                         <Calendar size={moderateScale(18)} color={primaryTextColor} />
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}
@@ -260,13 +260,13 @@ const JobDetails = () => {
                     </View>
                     <View className='flex-row items-center'
                         style={{
-                            gap: moderateScale(4),
-                            marginTop: moderateScale(10),
+                            gap: spacing.sm,
+                            marginTop: spacing.md,
                         }}
                     >
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}>
@@ -274,7 +274,7 @@ const JobDetails = () => {
                         </Text>
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}
@@ -284,13 +284,13 @@ const JobDetails = () => {
                     </View>
                     <View className='flex-row items-center'
                         style={{
-                            gap: moderateScale(4),
-                            marginTop: moderateScale(10),
+                            gap: spacing.sm,
+                            marginTop: spacing.md,
                         }}
                     >
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}>
@@ -298,7 +298,7 @@ const JobDetails = () => {
                         </Text>
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}
@@ -308,13 +308,13 @@ const JobDetails = () => {
                     </View>
                     <View className='flex-row items-center'
                         style={{
-                            gap: moderateScale(4),
-                            marginTop: moderateScale(10),
+                            gap: spacing.sm,
+                            marginTop: spacing.md,
                         }}
                     >
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}>
@@ -322,7 +322,7 @@ const JobDetails = () => {
                         </Text>
                         <Text
                             style={{
-                                fontSize: moderateScale(14),
+                                fontSize: fontSize.md,
                                 fontWeight: 'bold',
                                 color: primaryTextColor,
                             }}
@@ -340,14 +340,14 @@ const JobDetails = () => {
                             }
                         }}
                         style={{
-                            marginTop: moderateScale(10),
+                            marginTop: spacing.md,
                             backgroundColor: isApplied || isPending ? '#ccc' : primaryColor,
-                            padding: moderateScale(10),
-                            borderRadius: moderateScale(10),
+                            padding: spacing.md,
+                            borderRadius: spacing.md,
                             alignItems: 'center',
                         }}
                     >
-                        <Text style={{ color: '#fff', fontSize: moderateScale(16) }}>
+                        <Text style={{ color: '#fff', fontSize: fontSize.md }}>
                             {isPending ? "Applying..." : isApplied ? "Already Applied" : "Apply for this job"}
                         </Text>
                     </TouchableOpacity>

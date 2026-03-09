@@ -1,5 +1,6 @@
 import { useProfile } from '@/hooks/useProfile'
 import { primaryTextColor, secondaryTextColor } from '@/utils/theme'
+import { typography } from '@/utils/typography'
 import { useRouter } from 'expo-router'
 import { Bell } from 'lucide-react-native'
 import React from 'react'
@@ -16,14 +17,12 @@ const Header = () => {
         >
             <View>
                 <Text
-                    className='font-bold capitalize'
-                    style={{ color: primaryTextColor, fontSize: moderateScale(20) }}
+                    style={typography.h2}
                 >
                     Hi {user?.fullname || 'User'}!
                 </Text>
                 <Text
-                    className='text-sm'
-                    style={{ color: secondaryTextColor }}
+                  style={typography.body}
                 >
                     Let's help you land your dream job
                 </Text>
