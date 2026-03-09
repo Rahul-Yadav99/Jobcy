@@ -32,9 +32,9 @@ export const fontSize = {
 };
 
 export const headingSize = {
-    h1: moderateScale(18),
-    h2: moderateScale(16),
-    h3: moderateScale(14),
-    h4: moderateScale(12),
-    h5: moderateScale(10),
+    h1: moderateScale(24),
+    h2: moderateScale(20),
+    h3: moderateScale(18),
+    h4: moderateScale(16),
+    h5: moderateScale(14),
 };

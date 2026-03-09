@@ -2,6 +2,7 @@ import authApi from '@/api/auth';
 import SafeScreen from '@/components/SafeScreen';
 import { useAuth } from '@/contexts/AuthContext';
 import { disabledColor, placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
+import { typography } from '@/utils/typography';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -58,10 +59,8 @@ const Login = () => {
                             style={{ marginBottom: moderateScale(15) }}
                             source={require('@/assets/images/logojob.png')}
                         />
-                        <Text
-                            style={{ marginBottom: moderateScale(8), fontSize: moderateScale(24), color: primaryTextColor }}
-                            className='font-bold'>Welcome Back!</Text>
-                        <Text style={{ fontSize: moderateScale(12), color: secondaryTextColor }}>Sign in to continue your job search.</Text>
+                        <Text style={typography.h1}>Welcome Back!</Text>
+                        <Text style={typography.body}>Sign in to continue your job search.</Text>
                     </View>
                     {/* form */}
                     <View

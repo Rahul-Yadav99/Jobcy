@@ -1,5 +1,6 @@
 import SafeScreen from '@/components/SafeScreen';
 import { disabledColor, placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
+import { typography } from '@/utils/typography';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
@@ -36,10 +37,8 @@ const SignUp = () => {
                             style={{ marginBottom: moderateScale(15) }}
                             source={require('@/assets/images/logojob.png')}
                         />
-                        <Text
-                            style={{ marginBottom: moderateScale(8), fontSize: moderateScale(24), color: primaryTextColor }}
-                            className='font-bold'>Create an Account</Text>
-                        <Text style={{ fontSize: moderateScale(12), color: secondaryTextColor }}>Join us for an amazing job search experience.</Text>
+                        <Text style={typography.h1}>Create an Account</Text>
+                        <Text style={typography.body}>Join us for an amazing job search experience.</Text>
                     </View>
                     {/* form */}
                     <View
