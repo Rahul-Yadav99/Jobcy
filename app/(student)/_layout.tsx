@@ -1,20 +1,22 @@
-import { disabledColor, primaryColor } from '@/utils/theme'
+import { colors, primaryColor } from '@/utils/theme'
 import { Tabs } from 'expo-router'
 import { Home, LayoutDashboard, Newspaper } from 'lucide-react-native'
 import React from 'react'
 import { Image } from 'react-native'
-import { moderateScale } from 'react-native-size-matters'
+import { moderateScale, verticalScale } from 'react-native-size-matters'
 
 const StudentLayout = () => {
     return (
         <Tabs
             screenOptions={{
                 headerShown: false,
-                tabBarActiveTintColor: primaryColor,
-                tabBarInactiveTintColor: disabledColor,
+                tabBarActiveTintColor: colors.primaryColor,
+                tabBarInactiveTintColor: colors.disabledColor,
                 tabBarStyle: {
+                    borderTopColor: colors.disabledColor,
                     backgroundColor: '#fff',
-                    borderTopColor: disabledColor
+                    paddingTop: moderateScale(10),
+                    height: verticalScale(70)
                 },
                 tabBarLabelStyle: {
                     fontSize: moderateScale(9),
