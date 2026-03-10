@@ -1,6 +1,7 @@
 import studentApi from '@/api/student';
 import BackButton from '@/components/BackButton';
 import Empty from '@/components/Empty';
+import JobDetailsSkeleton from '@/components/Jobdetailsskeleton';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
 import { formatDate } from '@/utils/formateDate';
@@ -9,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { Briefcase, Calendar, IndianRupee, LaptopMinimal, MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const JobDetails = () => {
@@ -56,11 +57,7 @@ const JobDetails = () => {
 
     // Loading state
     if (isLoading) {
-        return (
-            <View className='flex-1 items-center justify-center'>
-                <ActivityIndicator size="large" color={primaryColor} />
-            </View>
-        )
+        return <JobDetailsSkeleton />
     }
 
     // Error state

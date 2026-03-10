@@ -6,7 +6,6 @@ import { moderateScale } from "react-native-size-matters"
 const BackButton = () => {
     const router = useRouter();
     return (
-
         <View>
             <TouchableOpacity
                 className="bg-neutral-100"

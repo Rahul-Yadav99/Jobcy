@@ -3,12 +3,13 @@ import Empty from '@/components/Empty';
 import Header from '@/components/Header';
 import HeaderCard from '@/components/HeaderCard';
 import JobCard from '@/components/JobCard';
+import { JobCardSkeletonList } from '@/components/Jobcardskeleton';
 import Recommended from '@/components/Recommended';
 import SafeScreen from '@/components/SafeScreen';
-import { primaryColor, secondaryTextColor } from '@/utils/theme';
+import { primaryColor } from '@/utils/theme';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Home = () => {
@@ -21,39 +22,22 @@ const Home = () => {
         }
     });
 
-    if (isLoading) {
-        return (
-            <SafeScreen>
-                <Header />
-                <HeaderCard />
-                <View className='flex-1 items-center justify-center'>
-                    <ActivityIndicator size={moderateScale(30)} color={primaryColor} />
-                    <Text
-                        style={{
-                            fontSize: moderateScale(12),
-                            color: secondaryTextColor,
-                            fontWeight: 'semibold',
-                            marginTop: moderateScale(10),
-                        }}
-                    >Loading jobs...</Text>
-                </View>
-            </SafeScreen>
-        );
-    }
-
     if (error) {
         return (
             <SafeScreen>
                 <Header />
                 <HeaderCard />
                 <View className='flex-1 items-center justify-center'>
-                    <Text className='text-black'
+                    <Text
+                        className='text-black'
                         style={{
                             fontSize: moderateScale(12),
                             fontWeight: 'semibold',
                             marginBottom: moderateScale(10),
                         }}
-                    >Failed to load jobs. Please try again.</Text>
+                    >
+                        Failed to load jobs. Please try again.
+                    </Text>
                     <TouchableOpacity
                         onPress={() => refetch()}
                         style={{
@@ -75,7 +59,7 @@ const Home = () => {
         <SafeScreen>
             <Header />
             <FlatList
-                data={data || []}
+                data={isLoading ? [] : (data || [])}
                 renderItem={({ item }) => <JobCard job={item} />}
                 keyExtractor={(item) => item._id}
                 showsVerticalScrollIndicator={false}
@@ -83,13 +67,16 @@ const Home = () => {
                     <>
                         <HeaderCard />
                         <Recommended />
+                        {isLoading && <JobCardSkeletonList count={6} />}
                     </>
                 }
                 ListEmptyComponent={
-                    <Empty
-                        isDetailsScreen={false}
-                        message='No jobs found'
-                    />
+                    !isLoading ? (
+                        <Empty
+                            isDetailsScreen={false}
+                            message='No jobs found'
+                        />
+                    ) : null
                 }
             />
         </SafeScreen>

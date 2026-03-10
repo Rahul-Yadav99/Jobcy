@@ -5,7 +5,6 @@ import { primaryColor } from '@/utils/theme'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useRef } from 'react'
 import {
-    ActivityIndicator,
     Animated,
     Dimensions,
     ScrollView,
@@ -14,6 +13,7 @@ import {
     View,
 } from 'react-native'
 import { LineChart, PieChart } from 'react-native-chart-kit'
+import { moderateScale } from 'react-native-size-matters'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window')
 const CHART_WIDTH = SCREEN_WIDTH - 48
@@ -35,30 +35,165 @@ const COLOR = {
     jobs: '#F97316',
 }
 
-const STATUS_MAP: Record<string, { color: string; bg: string; label: string }> = {
-    accepted: { color: COLOR.accepted, bg: '#D1FAE5', label: 'Accepted' },
-    pending: { color: COLOR.pending, bg: '#FEF3C7', label: 'Pending' },
-    viewed: { color: COLOR.viewed, bg: '#DBEAFE', label: 'Viewed' },
-    rejected: { color: COLOR.rejected, bg: '#FEE2E2', label: 'Rejected' },
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const formatDayLabel = (dateStr: string) => dateStr.split('-')[2]
 
-/**
- * react-native-chart-kit crashes when:
- * 1. All values are 0 (division by zero internally)
- * 2. Dataset is empty
- * This helper ensures safe data by adding a tiny epsilon to all-zero arrays.
- */
 const safeChartData = (values: number[]): number[] => {
     if (!values || values.length === 0) return [0, 0]
     const hasNonZero = values.some(v => v > 0)
-    // If all zeros, return same array but replace one value with tiny number
-    // so the chart renders a flat line without crashing
     if (!hasNonZero) return values.map(() => 0.001)
     return values
 }
+
+// ─── Skeleton Primitives ──────────────────────────────────────────────────────
+const SkeletonBox = ({
+    width,
+    height,
+    borderRadius = 8,
+    style,
+    anim,
+}: {
+    width: number | string
+    height: number
+    borderRadius?: number
+    style?: object
+    anim: Animated.Value
+}) => {
+    const bg = anim.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: ['#E8E8E8', '#F2F2F2', '#E8E8E8'],
+    })
+    return (
+        <Animated.View style={[{ width, height, borderRadius, backgroundColor: bg }, style]} />
+    )
+}
+
+// ─── Dashboard Skeleton ───────────────────────────────────────────────────────
+const DashboardSkeleton: React.FC = () => {
+    const anim = useRef(new Animated.Value(0)).current
+
+    useEffect(() => {
+        const loop = Animated.loop(
+            Animated.sequence([
+                Animated.timing(anim, { toValue: 1, duration: 900, useNativeDriver: false }),
+                Animated.timing(anim, { toValue: 0, duration: 900, useNativeDriver: false }),
+            ])
+        )
+        loop.start()
+        return () => loop.stop()
+    }, [anim])
+
+    const S = (props: Omit<Parameters<typeof SkeletonBox>[0], 'anim'>) => (
+        <SkeletonBox {...props} anim={anim} />
+    )
+
+    const CARD_W = (SCREEN_WIDTH - 40 - 20) / 3
+
+    return (
+        <ScrollView
+            contentContainerStyle={[styles.listContent, { paddingHorizontal: 20, paddingTop: 20 }]}
+            showsVerticalScrollIndicator={false}
+        >
+            {/* Page title + subtitle */}
+            <S width={moderateScale(140)} height={moderateScale(28)} borderRadius={6} />
+            <S width={moderateScale(190)} height={moderateScale(14)} borderRadius={4} style={{ marginTop: 8, marginBottom: 24 }} />
+
+            {/* Summary section label */}
+            <S width={moderateScale(80)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: 12 }} />
+
+            {/* 6 stat cards in 3-column grid */}
+            <View style={styles.statsGrid}>
+                {Array.from({ length: 6 }).map((_, i) => (
+                    <View key={i} style={[styles.statCard, { width: CARD_W }]}>
+                        {/* dot */}
+                        <S width={8} height={8} borderRadius={4} style={{ marginBottom: 8 }} />
+                        {/* value */}
+                        <S width={moderateScale(36)} height={moderateScale(22)} borderRadius={4} style={{ marginBottom: 6 }} />
+                        {/* label */}
+                        <S width={moderateScale(48)} height={moderateScale(11)} borderRadius={3} />
+                    </View>
+                ))}
+            </View>
+
+            {/* Pie chart card skeleton */}
+            <View style={[styles.chartCard, { marginTop: 8 }]}>
+                {/* accent bar */}
+                <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
+                <S width={moderateScale(140)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: 12 }} />
+                {/* pie placeholder — circle */}
+                <View style={skeletonStyles.pieRow}>
+                    <S width={moderateScale(140)} height={moderateScale(140)} borderRadius={moderateScale(70)} />
+                    {/* legend */}
+                    <View style={skeletonStyles.legendCol}>
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <View key={i} style={skeletonStyles.legendRow}>
+                                <S width={10} height={10} borderRadius={5} />
+                                <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} style={{ marginLeft: 8 }} />
+                            </View>
+                        ))}
+                    </View>
+                </View>
+            </View>
+
+            {/* Line chart card 1 — Applications Per Day */}
+            <View style={styles.chartCard}>
+                <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
+                <View style={skeletonStyles.chartTitleRow}>
+                    <S width={moderateScale(160)} height={moderateScale(14)} borderRadius={4} />
+                    <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} />
+                </View>
+                <S
+                    width={'100%'}
+                    height={moderateScale(180)}
+                    borderRadius={10}
+                    style={{ marginTop: 8 }}
+                />
+            </View>
+
+            {/* Line chart card 2 — Jobs Posted Per Day */}
+            <View style={styles.chartCard}>
+                <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
+                <View style={skeletonStyles.chartTitleRow}>
+                    <S width={moderateScale(150)} height={moderateScale(14)} borderRadius={4} />
+                    <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} />
+                </View>
+                <S
+                    width={'100%'}
+                    height={moderateScale(180)}
+                    borderRadius={10}
+                    style={{ marginTop: 8 }}
+                />
+            </View>
+        </ScrollView>
+    )
+}
+
+const skeletonStyles = StyleSheet.create({
+    accentBarPlaceholder: {
+        backgroundColor: '#E8E8E8',
+    },
+    pieRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 8,
+    },
+    legendCol: {
+        flex: 1,
+        marginLeft: 20,
+        gap: 12,
+    },
+    legendRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    chartTitleRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'baseline',
+        marginBottom: 12,
+    },
+})
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 const StatCard: React.FC<{
@@ -108,7 +243,6 @@ const ChartCard: React.FC<{
     </View>
 )
 
-
 // ─── Main Component ───────────────────────────────────────────────────────────
 const StudentHome: React.FC = () => {
     const { data, isLoading, isError, refetch } = useQuery({
@@ -123,18 +257,17 @@ const StudentHome: React.FC = () => {
         }
     }, [isLoading])
 
+    // ── Loading ────────────────────────────────────────────────────────────────
     if (isLoading) {
         return (
             <SafeScreen>
                 <Header />
-                <View style={styles.centered}>
-                    <ActivityIndicator size="large" color={primaryColor} />
-                    <Text style={styles.loadingText}>Loading dashboard…</Text>
-                </View>
+                <DashboardSkeleton />
             </SafeScreen>
         )
     }
 
+    // ── Error ──────────────────────────────────────────────────────────────────
     if (isError) {
         return (
             <SafeScreen>
@@ -157,9 +290,6 @@ const StudentHome: React.FC = () => {
         ? ((summary.accepted / summary.totalApplications) * 100).toFixed(1)
         : '0.0'
 
-    // const jobBreakdown: any[] = data?.jobBreakdown ?? [] // Removed as per request
-
-    // API returns newest-first → slice 7 → reverse for chronological left-to-right
     const applicationsPerDay: any[] = [...(data?.graphs?.applicationsPerDay ?? [])].slice(0, 7).reverse()
     const jobsPostedPerDay: any[] = [...(data?.graphs?.jobsPostedPerDay ?? [])].slice(0, 7).reverse()
 
@@ -171,23 +301,14 @@ const StudentHome: React.FC = () => {
 
     const applicationChartData = {
         labels: appLabels,
-        datasets: [{
-            data: appValues,
-            color: (opacity = 1) => `rgba(59,130,246,${opacity})`,
-            strokeWidth: 2,
-        }],
+        datasets: [{ data: appValues, color: (opacity = 1) => `rgba(59,130,246,${opacity})`, strokeWidth: 2 }],
     }
 
     const jobsChartData = {
         labels: jobLabels,
-        datasets: [{
-            data: jobValues,
-            color: (opacity = 1) => `rgba(249,115,22,${opacity})`,
-            strokeWidth: 2,
-        }],
+        datasets: [{ data: jobValues, color: (opacity = 1) => `rgba(249,115,22,${opacity})`, strokeWidth: 2 }],
     }
 
-    // Filter zero slices — pie chart also crashes with all-zero data
     const statusPieData = [
         { name: 'Accepted', population: summary.accepted, color: COLOR.accepted, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
         { name: 'Pending', population: summary.pending, color: COLOR.pending, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
@@ -204,6 +325,7 @@ const StudentHome: React.FC = () => {
         propsForBackgroundLines: { stroke: '#F1F2F7', strokeDasharray: '' },
     }
 
+    // ── Render ─────────────────────────────────────────────────────────────────
     return (
         <SafeScreen>
             <Header />
@@ -212,7 +334,6 @@ const StudentHome: React.FC = () => {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.headerWrapper}>
-                    {/* Page Title */}
                     <Animated.View style={{
                         opacity: headerAnim,
                         transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
@@ -221,7 +342,6 @@ const StudentHome: React.FC = () => {
                         <Text style={styles.pageSubtitle}>Your application overview</Text>
                     </Animated.View>
 
-                    {/* Summary Stats */}
                     <View style={styles.statsSection}>
                         <SectionHeader title="Summary" />
                         <View style={styles.statsGrid}>
@@ -234,7 +354,6 @@ const StudentHome: React.FC = () => {
                         </View>
                     </View>
 
-                    {/* Status Distribution Pie */}
                     {statusPieData.length > 0 && (
                         <ChartCard title="Status Distribution" accentColor={COLOR.accent}>
                             <PieChart
@@ -251,7 +370,6 @@ const StudentHome: React.FC = () => {
                         </ChartCard>
                     )}
 
-                    {/* Applications Per Day */}
                     <ChartCard title="Applications Per Day" subtitle="Last 7 days" accentColor={COLOR.accent}>
                         <LineChart
                             data={applicationChartData}
@@ -266,7 +384,6 @@ const StudentHome: React.FC = () => {
                             withInnerLines
                             withOuterLines={false}
                             withShadow={false}
-                            // Hide y-axis labels when all values are effectively 0
                             formatYLabel={(val) => {
                                 const n = parseFloat(val)
                                 return n < 0.01 ? '0' : String(Math.round(n))
@@ -275,7 +392,6 @@ const StudentHome: React.FC = () => {
                         />
                     </ChartCard>
 
-                    {/* Jobs Posted Per Day */}
                     <ChartCard title="Jobs Posted Per Day" subtitle="Last 7 days" accentColor={COLOR.jobs}>
                         <LineChart
                             data={jobsChartData}
@@ -306,7 +422,6 @@ const StudentHome: React.FC = () => {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
-    loadingText: { fontSize: 14, color: COLOR.textMuted, marginTop: 8 },
     errorIcon: { fontSize: 36, marginBottom: 4 },
     errorTitle: { fontSize: 18, fontWeight: '700', color: COLOR.textPrimary },
     errorSub: { fontSize: 14, color: COLOR.textSecondary },
@@ -324,7 +439,6 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.surface,
         borderRadius: 14,
         padding: 14,
-        width: (SCREEN_WIDTH - 40 - 20) / 3,
         alignItems: 'flex-start',
         borderWidth: 1,
         borderColor: COLOR.border,
