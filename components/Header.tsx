@@ -1,5 +1,5 @@
 import { useProfile } from '@/hooks/useProfile'
-import { primaryTextColor, secondaryTextColor } from '@/utils/theme'
+import { primaryTextColor } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useRouter } from 'expo-router'
 import { Bell } from 'lucide-react-native'
@@ -22,9 +22,9 @@ const Header = () => {
                     Hi {user?.fullname || 'User'}!
                 </Text>
                 <Text
-                  style={typography.body}
+                    style={typography.body}
                 >
-                    Let's help you land your dream job
+                    Let&apos;s help you land your dream job
                 </Text>
             </View>
 

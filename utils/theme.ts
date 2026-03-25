@@ -20,6 +20,7 @@ export const spacing = {
     md: moderateScale(16),
     lg: moderateScale(24),
     xl: moderateScale(32),
+    xxl: moderateScale(40),
 };
 
 export const fontSize = {
