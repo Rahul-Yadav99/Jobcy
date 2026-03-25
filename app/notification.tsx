@@ -1,11 +1,22 @@
+import studentApi from '@/api/student'
 import BackButton from '@/components/BackButton'
+import NotificationCard from '@/components/NotificationCard'
 import SafeScreen from '@/components/SafeScreen'
 import { primaryTextColor } from '@/utils/theme'
+import { useQuery } from '@tanstack/react-query'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { FlatList, Text, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 
 const Notification = () => {
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['notifications'],
+        queryFn: studentApi.getAllNotifications,
+    })
+
+    console.log(data)
+
     return (
         <SafeScreen>
             <View
@@ -27,6 +38,11 @@ const Notification = () => {
                     Notification
                 </Text>
             </View>
+            <FlatList
+                data={data || []}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => <NotificationCard />}
+            />
         </SafeScreen>
     )
 }

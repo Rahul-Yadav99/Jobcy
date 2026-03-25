@@ -57,6 +57,20 @@ const studentApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    getAllNotifications: async () => {
+        try {
+            const response = await axios.get(`${BASE_API_END_POINT}/student`, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.notifications
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 
