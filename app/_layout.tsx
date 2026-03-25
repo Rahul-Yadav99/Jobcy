@@ -1,12 +1,13 @@
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { useRole } from '@/hooks/useRole'
-import { primaryColor } from '@/utils/theme'
+import { colors } from '@/utils/theme'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Stack, useRouter, useSegments } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import React, { useEffect } from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, Image, View } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { moderateScale, verticalScale } from 'react-native-size-matters'
 import '../global.css'
 
 const queryClient = new QueryClient()
@@ -45,7 +46,12 @@ const NavigationGuard = () => {
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <ActivityIndicator size="large" color={primaryColor} />
+        <Image
+          source={require('@/assets/images/logojob.png')}
+          style={{ width: moderateScale(200), height: verticalScale(50), marginBottom: moderateScale(10) }}
+          resizeMode="contain"
+        />
+        <ActivityIndicator size="large" color={colors.primaryColor} />
       </View>
     )
   }

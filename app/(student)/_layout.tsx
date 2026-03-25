@@ -15,8 +15,6 @@ const StudentLayout = () => {
                 tabBarStyle: {
                     borderTopColor: colors.disabledColor,
                     backgroundColor: '#fff',
-                    paddingTop: moderateScale(10),
-                    height: verticalScale(70)
                 },
                 tabBarLabelStyle: {
                     fontSize: moderateScale(9),
