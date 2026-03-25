@@ -33,12 +33,9 @@ const Login = () => {
             }
             const res = await authApi.login(payload);
             if (res.success) {
+                // Only call authLogin - let NavigationGuard handle routing
                 await authLogin(res.token, res.user.role, res.user);
-                if (res.user.role === 'student') {
-                    router.replace('/(student)')
-                } else if (res.user.role === 'recruiter') {
-                    router.replace('/(recruiter)')
-                }
+                // No manual router.replace() here - NavigationGuard will handle it
             }
         } catch (err: any) {
             Alert.alert('Login Failed', err);
@@ -225,7 +222,7 @@ const Login = () => {
                     >
                         <Text
                             style={{ fontSize: moderateScale(12), color: secondaryTextColor }}
-                        >Don't have an account? <Text className='text-primary' style={{ fontSize: moderateScale(13), color: primaryTextColor }} >Sign Up</Text></Text>
+                        >Don&apos;t have an account? <Text className='text-primary' style={{ fontSize: moderateScale(13), color: primaryTextColor }} >Sign Up</Text></Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

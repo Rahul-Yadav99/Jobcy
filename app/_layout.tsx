@@ -17,7 +17,8 @@ const NavigationGuard = () => {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
   const { role, loading: isRoleLoading } = useRole();
 
-  const isLoading = isAuthLoading || (isAuthenticated && isRoleLoading && !role);
+  // Show loading only if auth is loading OR (authenticated but waiting for role)
+  const isLoading = isAuthLoading || (isAuthenticated && isRoleLoading);
 
   useEffect(() => {
     if (isLoading) return
@@ -25,10 +26,12 @@ const NavigationGuard = () => {
     const inAuthGroup = (segments as any).includes('(auth)') || (segments as any).includes('sign-up');
 
     if (!isAuthenticated) {
+      // User is logged out - send to login
       if (!inAuthGroup) {
         router.replace('/(auth)')
       }
     } else {
+      // User is logged in - send to appropriate dashboard based on role
       if (inAuthGroup) {
         if (role === 'student') {
           router.replace('/(student)')
@@ -37,7 +40,7 @@ const NavigationGuard = () => {
         }
       }
     }
-  }, [isLoading, isAuthenticated, role, segments])
+  }, [isLoading, isAuthenticated, role, segments, router])
 
   if (isLoading) {
     return (

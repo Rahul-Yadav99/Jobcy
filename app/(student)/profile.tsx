@@ -43,7 +43,7 @@ const Profile = () => {
             if (!result.canceled) {
                 setResume(result.assets[0]);
             }
-        } catch (error) {
+        } catch (error: any) {
             Alert.alert("Error", "Unable to pick resume");
         }
     };

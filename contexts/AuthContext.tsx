@@ -6,6 +6,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
+    user: any | null;
     login: (token: string, role: string, user: any) => Promise<void>;
     logout: () => Promise<void>;
     checkAuth: () => Promise<void>;
@@ -16,13 +17,22 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState<any | null>(null);
 
     const checkAuth = async () => {
         try {
             const token = await authService.getToken();
-            setIsAuthenticated(!!token);
+            if (token) {
+                const storedUser = await profileService.getUser();
+                setUser(storedUser);
+                setIsAuthenticated(true);
+            } else {
+                setUser(null);
+                setIsAuthenticated(false);
+            }
         } catch (error) {
             console.error('Auth check failed:', error);
+            setUser(null);
             setIsAuthenticated(false);
         } finally {
             setIsLoading(false);
@@ -34,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await authService.saveToken(token);
             await roleService.saveRole(role);
             await profileService.saveUser(user);
+            setUser(user);
             setIsAuthenticated(true);
         } catch (error) {
             console.error('Login failed:', error);
@@ -46,6 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             await authService.removeToken();
             await roleService.removeRole();
             await profileService.deleteUser();
+            setUser(null);
             setIsAuthenticated(false);
         } catch (error) {
             console.error('Logout failed:', error);
@@ -62,6 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             value={{
                 isAuthenticated,
                 isLoading,
+                user,
                 login,
                 logout,
                 checkAuth,

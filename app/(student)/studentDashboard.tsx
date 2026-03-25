@@ -1,7 +1,7 @@
 import studentApi from '@/api/student'
 import Header from '@/components/Header'
 import SafeScreen from '@/components/SafeScreen'
-import { primaryColor } from '@/utils/theme'
+import { colors, fontSize, headingSize, spacing } from '@/utils/theme'
 import { useQuery } from '@tanstack/react-query'
 import React, { useEffect, useRef } from 'react'
 import {
@@ -23,15 +23,15 @@ const COLOR = {
     bg: '#F7F8FC',
     surface: '#FFFFFF',
     border: '#EAECF4',
-    textPrimary: '#12141D',
-    textSecondary: '#6B7280',
+    textPrimary: colors.primaryTextColor,
+    textSecondary: colors.secondaryTextColor,
     textMuted: '#9CA3AF',
     accepted: '#10B981',
     pending: '#F59E0B',
     viewed: '#3B82F6',
     rejected: '#EF4444',
     success: '#8B5CF6',
-    accent: '#3B82F6',
+    accent: colors.primaryColor,
     jobs: '#F97316',
 }
 
@@ -91,24 +91,24 @@ const DashboardSkeleton: React.FC = () => {
 
     return (
         <ScrollView
-            contentContainerStyle={[styles.listContent, { paddingHorizontal: 20, paddingTop: 20 }]}
+            contentContainerStyle={[styles.listContent, { paddingHorizontal: spacing.lg, paddingTop: spacing.lg }]}
             showsVerticalScrollIndicator={false}
         >
             {/* Page title + subtitle */}
             <S width={moderateScale(140)} height={moderateScale(28)} borderRadius={6} />
-            <S width={moderateScale(190)} height={moderateScale(14)} borderRadius={4} style={{ marginTop: 8, marginBottom: 24 }} />
+            <S width={moderateScale(190)} height={moderateScale(14)} borderRadius={4} style={{ marginTop: spacing.xs, marginBottom: spacing.lg }} />
 
             {/* Summary section label */}
-            <S width={moderateScale(80)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: 12 }} />
+            <S width={moderateScale(80)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: spacing.md }} />
 
             {/* 6 stat cards in 3-column grid */}
             <View style={styles.statsGrid}>
                 {Array.from({ length: 6 }).map((_, i) => (
                     <View key={i} style={[styles.statCard, { width: CARD_W }]}>
                         {/* dot */}
-                        <S width={8} height={8} borderRadius={4} style={{ marginBottom: 8 }} />
+                        <S width={8} height={8} borderRadius={4} style={{ marginBottom: spacing.xs }} />
                         {/* value */}
-                        <S width={moderateScale(36)} height={moderateScale(22)} borderRadius={4} style={{ marginBottom: 6 }} />
+                        <S width={moderateScale(36)} height={moderateScale(22)} borderRadius={4} style={{ marginBottom: spacing.xs }} />
                         {/* label */}
                         <S width={moderateScale(48)} height={moderateScale(11)} borderRadius={3} />
                     </View>
@@ -116,10 +116,10 @@ const DashboardSkeleton: React.FC = () => {
             </View>
 
             {/* Pie chart card skeleton */}
-            <View style={[styles.chartCard, { marginTop: 8 }]}>
+            <View style={[styles.chartCard, { marginTop: spacing.sm }]}>
                 {/* accent bar */}
                 <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
-                <S width={moderateScale(140)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: 12 }} />
+                <S width={moderateScale(140)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: spacing.md }} />
                 {/* pie placeholder — circle */}
                 <View style={skeletonStyles.pieRow}>
                     <S width={moderateScale(140)} height={moderateScale(140)} borderRadius={moderateScale(70)} />
@@ -128,7 +128,7 @@ const DashboardSkeleton: React.FC = () => {
                         {Array.from({ length: 4 }).map((_, i) => (
                             <View key={i} style={skeletonStyles.legendRow}>
                                 <S width={10} height={10} borderRadius={5} />
-                                <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} style={{ marginLeft: 8 }} />
+                                <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} style={{ marginLeft: spacing.sm }} />
                             </View>
                         ))}
                     </View>
@@ -146,7 +146,7 @@ const DashboardSkeleton: React.FC = () => {
                     width={'100%'}
                     height={moderateScale(180)}
                     borderRadius={10}
-                    style={{ marginTop: 8 }}
+                    style={{ marginTop: spacing.sm }}
                 />
             </View>
 
@@ -161,7 +161,7 @@ const DashboardSkeleton: React.FC = () => {
                     width={'100%'}
                     height={moderateScale(180)}
                     borderRadius={10}
-                    style={{ marginTop: 8 }}
+                    style={{ marginTop: spacing.sm }}
                 />
             </View>
         </ScrollView>
@@ -176,12 +176,12 @@ const skeletonStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: 8,
+        paddingHorizontal: spacing.xs,
     },
     legendCol: {
         flex: 1,
-        marginLeft: 20,
-        gap: 12,
+        marginLeft: spacing.lg,
+        gap: spacing.md,
     },
     legendRow: {
         flexDirection: 'row',
@@ -191,7 +191,7 @@ const skeletonStyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'baseline',
-        marginBottom: 12,
+        marginBottom: spacing.md,
     },
 })
 
@@ -205,7 +205,7 @@ const StatCard: React.FC<{
     const anim = useRef(new Animated.Value(0)).current
     useEffect(() => {
         Animated.timing(anim, { toValue: 1, duration: 500, delay, useNativeDriver: true }).start()
-    }, [])
+    }, [anim, delay])
     return (
         <Animated.View style={[
             styles.statCard,
@@ -255,7 +255,7 @@ const StudentHome: React.FC = () => {
         if (!isLoading) {
             Animated.timing(headerAnim, { toValue: 1, duration: 600, useNativeDriver: true }).start()
         }
-    }, [isLoading])
+    }, [isLoading, headerAnim])
 
     // ── Loading ────────────────────────────────────────────────────────────────
     if (isLoading) {
@@ -421,24 +421,24 @@ const StudentHome: React.FC = () => {
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
-    errorIcon: { fontSize: 36, marginBottom: 4 },
-    errorTitle: { fontSize: 18, fontWeight: '700', color: COLOR.textPrimary },
-    errorSub: { fontSize: 14, color: COLOR.textSecondary },
-    retryBtn: { marginTop: 12, fontSize: 14, fontWeight: '600', color: COLOR.accent, textDecorationLine: 'underline' },
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: spacing.md },
+    errorIcon: { fontSize: headingSize.h1, marginBottom: spacing.sm },
+    errorTitle: { fontSize: headingSize.h2, fontWeight: '700', color: COLOR.textPrimary },
+    errorSub: { fontSize: fontSize.md, color: COLOR.textSecondary },
+    retryBtn: { marginTop: spacing.md, fontSize: fontSize.md, fontWeight: '600', color: COLOR.accent, textDecorationLine: 'underline' },
 
-    listContent: { backgroundColor: COLOR.bg, paddingBottom: 32 },
-    headerWrapper: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 8 },
+    listContent: { backgroundColor: COLOR.bg, paddingBottom: spacing.xl },
+    headerWrapper: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
 
-    pageTitle: { fontSize: 28, fontWeight: '800', color: COLOR.textPrimary, letterSpacing: -0.5 },
-    pageSubtitle: { fontSize: 14, color: COLOR.textMuted, marginTop: 2, marginBottom: 24 },
+    pageTitle: { fontSize: headingSize.h1, fontWeight: '800', color: COLOR.textPrimary, letterSpacing: -0.5 },
+    pageSubtitle: { fontSize: fontSize.md, color: COLOR.textMuted, marginTop: spacing.xs, marginBottom: spacing.lg },
 
-    statsSection: { marginBottom: 20 },
-    statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+    statsSection: { marginBottom: spacing.lg },
+    statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
     statCard: {
         backgroundColor: COLOR.surface,
-        borderRadius: 14,
-        padding: 14,
+        borderRadius: moderateScale(14),
+        padding: spacing.md,
         alignItems: 'flex-start',
         borderWidth: 1,
         borderColor: COLOR.border,
@@ -448,15 +448,15 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         elevation: 2,
     },
-    statDot: { width: 8, height: 8, borderRadius: 4, marginBottom: 8 },
-    statValue: { fontSize: 22, fontWeight: '800', letterSpacing: -0.5 },
-    statLabel: { fontSize: 11, color: COLOR.textMuted, marginTop: 2, fontWeight: '500' },
+    statDot: { width: 8, height: 8, borderRadius: 4, marginBottom: spacing.xs },
+    statValue: { fontSize: headingSize.h2, fontWeight: '800', letterSpacing: -0.5 },
+    statLabel: { fontSize: fontSize.xs, color: COLOR.textMuted, marginTop: spacing.xs, fontWeight: '500' },
 
     chartCard: {
         backgroundColor: COLOR.surface,
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 16,
+        borderRadius: moderateScale(16),
+        padding: spacing.md,
+        marginBottom: spacing.md,
         borderWidth: 1,
         borderColor: COLOR.border,
         shadowColor: '#000',
@@ -468,16 +468,16 @@ const styles = StyleSheet.create({
     },
     chartAccentBar: {
         position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-        borderTopLeftRadius: 16, borderTopRightRadius: 16,
+        borderTopLeftRadius: moderateScale(16), borderTopRightRadius: moderateScale(16),
     },
-    chart: { borderRadius: 10, marginTop: 8 },
+    chart: { borderRadius: 10, marginTop: spacing.sm },
 
     sectionHeader: {
         flexDirection: 'row', justifyContent: 'space-between',
-        alignItems: 'baseline', marginBottom: 12,
+        alignItems: 'baseline', marginBottom: spacing.md,
     },
-    sectionTitle: { fontSize: 16, fontWeight: '700', color: COLOR.textPrimary, letterSpacing: -0.2 },
-    sectionSubtitle: { fontSize: 12, color: COLOR.textMuted, fontWeight: '500' },
+    sectionTitle: { fontSize: headingSize.h3, fontWeight: '700', color: COLOR.textPrimary, letterSpacing: -0.2 },
+    sectionSubtitle: { fontSize: fontSize.sm, color: COLOR.textMuted, fontWeight: '500' },
 })
 
 export default StudentHome
