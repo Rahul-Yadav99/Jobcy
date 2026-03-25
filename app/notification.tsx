@@ -1,21 +1,20 @@
 import studentApi from '@/api/student'
 import BackButton from '@/components/BackButton'
 import NotificationCard from '@/components/NotificationCard'
+import { NotificationCardSkeletonList } from '@/components/NotificationCardSkeleton'
 import SafeScreen from '@/components/SafeScreen'
-import { spacing } from '@/utils/theme'
+import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
-import { FlatList, Text, View } from 'react-native'
+import { FlatList, RefreshControl, Text, View } from 'react-native'
 
 const Notification = () => {
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, refetch } = useQuery({
         queryKey: ['notifications'],
         queryFn: studentApi.getAllNotifications,
     })
-
-    console.log(data)
 
     return (
         <SafeScreen>
@@ -39,6 +38,16 @@ const Notification = () => {
                 data={data || []}
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => <NotificationCard item={item} />}
+                ListEmptyComponent={
+                    isLoading ? <NotificationCardSkeletonList count={5} /> : null
+                }
+                refreshControl={
+                    <RefreshControl
+                        refreshing={isLoading}
+                        onRefresh={() => refetch()}
+                        tintColor={colors.primaryColor}
+                    />
+                }
             />
         </SafeScreen>
     )

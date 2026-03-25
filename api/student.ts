@@ -71,6 +71,20 @@ const studentApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    markAsReadNotification: async (id: string) => {
+        try {
+            const response = await axios.post(`${BASE_API_END_POINT}/read`, { id }, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 

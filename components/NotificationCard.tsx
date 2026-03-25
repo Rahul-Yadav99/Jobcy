@@ -1,10 +1,25 @@
+import studentApi from '@/api/student'
 import { formatDate } from '@/utils/formateDate'
 import { colors, headingSize, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
-import { Image, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, Image, Text, TouchableOpacity, View } from 'react-native'
 
 const NotificationCard = ({ item }: { item: any }) => {
+
+    const queryClient = useQueryClient();
+
+    const { mutate: markAsRead, isPending } = useMutation({
+        mutationFn: (id: string) => studentApi.markAsReadNotification(id),
+        onSuccess: () => {
+            // Invalidate and refetch the notifications query
+            queryClient.invalidateQueries({ queryKey: ['notifications'] });
+        },
+        onError: (error: string) => {
+            Alert.alert('Error', error || 'Failed to mark notification as read. Please try again.');
+        }
+    });
 
     const normalizeType = (type: string) => {
         switch (type) {
@@ -76,31 +91,32 @@ const NotificationCard = ({ item }: { item: any }) => {
                             <Text style={{ color: colors.secondaryTextColor }}>{formatDate(item?.createdAt)}</Text>
                         </View>
                     </View>
-
-
-
                 </View>
                 <Text>{item?.message}</Text>
                 {
                     !item?.isRead && (
                         <TouchableOpacity
                             activeOpacity={0.5}
+                            onPress={() => markAsRead(item._id)}
                             style={{
                                 backgroundColor: colors.primaryColor,
                                 padding: spacing.sm,
                                 borderRadius: spacing.sm,
-                                alignSelf: 'flex-center',
                             }}
                         >
-                            <Text
-                                style={{
-                                    color: '#fff',
-                                    fontWeight: '600',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                Mark as read
-                            </Text>
+                            {
+                                isPending ? <ActivityIndicator size="small" color="#fff" /> :
+                                    <Text
+                                        style={{
+                                            color: '#fff',
+                                            fontWeight: '600',
+                                            textAlign: 'center',
+                                        }}
+                                    >
+                                        Mark as read
+                                    </Text>
+                            }
+
                         </TouchableOpacity>
                     )
                 }
