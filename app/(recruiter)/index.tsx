@@ -1,4 +1,5 @@
 import recruiterApi from '@/api/recruiter'
+import CompanyCard from '@/components/CompanyCard'
 import Header from '@/components/Header'
 import ModalCloseButton from '@/components/ModalCloseButton'
 import SafeScreen from '@/components/SafeScreen'
@@ -7,7 +8,7 @@ import { typography } from '@/utils/typography'
 import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react-native'
 import React from 'react'
-import { Modal, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Modal, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 
 const RecruiterHome = () => {
@@ -15,10 +16,14 @@ const RecruiterHome = () => {
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['companies'],
-        queryFn: async () => {
-            return recruiterApi.getAllCompanies()
-        }
+        queryFn: recruiterApi.getAllCompanies,
     })
+
+    console.log('Companies data:', data);
+
+    if (isLoading) {
+        return <Text>Loading...</Text>;
+    }
 
     return (
         <SafeScreen>
@@ -27,13 +32,23 @@ const RecruiterHome = () => {
                 style={{
                     flex: 1,
                     paddingHorizontal: spacing.md,
-                    paddingVertical: spacing.sm,
-                    // flexDirection: 'row',
-                    // alignItems: 'center',
-                    // justifyContent: 'space-between',
                 }}
             >
-                <Text style={typography.h3}>Companies</Text>
+
+                <FlatList
+                    data={data || []}
+                    keyExtractor={(item) => item?._id}
+                    renderItem={({ item }) => <CompanyCard item={item} />}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <Text style={typography.h3}>
+                            Companies
+                        </Text>
+                    }
+                    ListHeaderComponentStyle={{
+                        marginVertical: spacing.md,
+                    }}
+                />
                 <TouchableOpacity
                     onPress={() => setModalVisible(true)}
                     className='rounded-full p-2'
@@ -53,8 +68,14 @@ const RecruiterHome = () => {
                 animationType="slide"
                 visible={modalVisible}
             >
-
-                <ModalCloseButton onPress={() => setModalVisible(false)} />
+                <View
+                    style={{
+                        flex: 1,
+                        padding: spacing.md,
+                    }}
+                >
+                    <ModalCloseButton onPress={() => setModalVisible(false)} />
+                </View>
             </Modal>
         </SafeScreen>
     )

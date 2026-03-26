@@ -11,7 +11,8 @@ export const colors = {
     placeholderColor: "#9CA3AF",
     disabledColor: "#D1D5DB",
     primaryTextColor: "#404040",
-    secondaryTextColor: "#737373"
+    secondaryTextColor: "#737373",
+    backgroundGray: '#f3f4f6'
 }
 
 export const spacing = {

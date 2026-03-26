@@ -10,7 +10,7 @@ const recruiterApi = {
                     "Content-Type": "application/json"
                 }
             })
-            return response.data;
+            return response.data.company;
         } catch (error: any) {
             throw error.response.data.message;
         }

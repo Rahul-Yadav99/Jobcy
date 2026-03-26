@@ -17,6 +17,11 @@ export const typography = StyleSheet.create({
         fontWeight: "600",
         color: colors.primaryTextColor,
     },
+    h4: {
+        fontSize: headingSize.h4,
+        fontWeight: "600",
+        color: colors.primaryTextColor,
+    },
     body: {
         fontSize: fontSize.sm,
         color: colors.secondaryTextColor,

@@ -10,7 +10,6 @@ import { moderateScale } from 'react-native-size-matters'
 const Header = () => {
     const router = useRouter();
     const { user } = useProfile();
-    console.log('User in Header:', user);
     return (
         <View
             className='flex-row items-center justify-between border-b border-neutral-200'
