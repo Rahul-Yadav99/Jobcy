@@ -1,8 +1,10 @@
+import recruiterApi from '@/api/recruiter'
 import Header from '@/components/Header'
 import ModalCloseButton from '@/components/ModalCloseButton'
 import SafeScreen from '@/components/SafeScreen'
 import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
+import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react-native'
 import React from 'react'
 import { Modal, Text, TouchableOpacity, View } from 'react-native'
@@ -10,6 +12,13 @@ import { moderateScale } from 'react-native-size-matters'
 
 const RecruiterHome = () => {
     const [modalVisible, setModalVisible] = React.useState(false);
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ['companies'],
+        queryFn: async () => {
+            return recruiterApi.getAllCompanies()
+        }
+    })
 
     return (
         <SafeScreen>
