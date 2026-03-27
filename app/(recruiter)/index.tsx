@@ -25,6 +25,10 @@ const RecruiterHome = () => {
         return <Text>Loading...</Text>;
     }
 
+    if (error) {
+        return <Text>Error: {error.message}</Text>;
+    }
+
     return (
         <SafeScreen>
             <Header />
