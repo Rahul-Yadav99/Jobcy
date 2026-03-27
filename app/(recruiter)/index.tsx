@@ -12,7 +12,7 @@ import { FlatList, Modal, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 
 const RecruiterHome = () => {
-    const [modalVisible, setModalVisible] = React.useState(false);
+    const [modalVisible, setModalVisible] = React.useState(true);
 
     const { data, isLoading, error } = useQuery({
         queryKey: ['companies'],
@@ -67,6 +67,8 @@ const RecruiterHome = () => {
             <Modal
                 animationType="slide"
                 visible={modalVisible}
+                onRequestClose={() => setModalVisible(false)}
+
             >
                 <View
                     style={{
@@ -74,7 +76,16 @@ const RecruiterHome = () => {
                         padding: spacing.md,
                     }}
                 >
-                    <ModalCloseButton onPress={() => setModalVisible(false)} />
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <Text style={typography.h3}>Create company</Text>
+                        <ModalCloseButton onPress={() => setModalVisible(false)} />
+                    </View>
                 </View>
             </Modal>
         </SafeScreen>

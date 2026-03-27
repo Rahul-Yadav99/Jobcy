@@ -34,11 +34,28 @@ const CompanyCard = ({ item }: { item: any }) => {
                         gap: spacing.sm,
                     }}
                 >
-                    <Image
-                        source={{ uri: item?.logo }}
-                        style={{ width: spacing.xxl, height: spacing.xxl }}
-                        resizeMode='contain'
-                    />
+                    {
+                        item?.logo ? (
+                            <Image
+                                source={{ uri: item?.logo }}
+                                style={{ width: spacing.xxl, height: spacing.xxl }}
+                                resizeMode='contain'
+                            />
+                        ) : (
+                            <View
+                                style={{
+                                    width: spacing.xxl,
+                                    height: spacing.xxl,
+                                    borderRadius: spacing.sm,
+                                    backgroundColor: colors.backgroundGray,
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text style={typography.h4}>{item?.name.charAt(0).toUpperCase()}</Text>
+                            </View>
+                        )
+                    }
                     <Text className='capitalize' style={typography.h4}>{item?.name}</Text>
                 </View>
                 {
