@@ -36,7 +36,7 @@ const Header = () => {
                     <TouchableOpacity
                         className='bg-neutral-100 rounded-full p-2'
                         activeOpacity={0.9}
-                        onPress={() => router.push('/notification')}
+                        onPress={() => router.push('/messages')}
                     >
                         <MessageCircle size={moderateScale(24)} color={primaryTextColor} />
                     </TouchableOpacity>
