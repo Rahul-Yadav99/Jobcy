@@ -1,6 +1,6 @@
 import { colors, primaryColor } from '@/utils/theme'
 import { Tabs } from 'expo-router'
-import { Home, LayoutDashboard, Newspaper } from 'lucide-react-native'
+import { Building, Home, LayoutDashboard, Newspaper } from 'lucide-react-native'
 import React from 'react'
 import { Image } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
@@ -25,9 +25,9 @@ const RecruiterLayout = () => {
             <Tabs.Screen
                 name='index'
                 options={{
-                    title: 'Home',
+                    title: 'Companies',
                     tabBarIcon: ({ color }) => (
-                        <Home size={moderateScale(20)} color={color} />
+                        <Building size={moderateScale(20)} color={color} />
                     )
                 }}
             />
@@ -43,7 +43,7 @@ const RecruiterLayout = () => {
             <Tabs.Screen
                 name='jobs'
                 options={{
-                    title: 'My Jobs',
+                    title: 'Jobs',
                     tabBarIcon: ({ color }) => (
                         <Newspaper size={moderateScale(20)} color={color} />
                     )

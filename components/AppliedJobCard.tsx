@@ -1,5 +1,5 @@
 import { formatDate } from '@/utils/formateDate'
-import { primaryTextColor, secondaryTextColor } from '@/utils/theme'
+import { colors, primaryTextColor, secondaryTextColor, spacing } from '@/utils/theme'
 import { useRouter } from 'expo-router'
 import { Calendar, IndianRupee, MapPin } from 'lucide-react-native'
 import React from 'react'
@@ -12,10 +12,11 @@ const AppliedJobCard = ({ job }: { job: any }) => {
         <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => router.push(`/jobDetails/${job?.job?._id}`)}
-            className='border border-neutral-300 rounded-xl'
             style={{
-                marginBottom: moderateScale(10),
-                padding: moderateScale(10),
+                padding: spacing.md,
+                borderWidth: 1,
+                borderColor: colors.disabledColor,
+                borderRadius: spacing.sm,
             }}
         >
             <View className='flex-row items-center justify-between'
