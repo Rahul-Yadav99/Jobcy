@@ -14,6 +14,20 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    registerNewCompany: async (companyName: string) => {
+        try {
+            const response = await axios.post(`${COMPANY_API_END_POINT}/register`, { companyName }, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.company;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 
