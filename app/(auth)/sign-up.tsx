@@ -1,10 +1,11 @@
 import SafeScreen from '@/components/SafeScreen';
+import { Button, Input } from '@/components/ui';
 import { disabledColor, placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
 import { typography } from '@/utils/typography';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const SignUp = () => {
@@ -12,17 +13,26 @@ const SignUp = () => {
     const [jobSeeker, setJobSeeker] = useState(true);
     const [recruiter, setRecruiter] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
 
-    const login = () => {
+    const handleSignUp = () => {
         const role = jobSeeker ? 'student' : 'recruiter';
         try {
-
+            if (!name || !email || !phone || !password) {
+                Alert.alert('Error', 'Please fill all the fields');
+                return;
+            }
+            setLoading(true);
+            // Handle signup logic here
+            Alert.alert('Success', `Signed up as ${role}`);
         } catch (error) {
-
+            Alert.alert('Error', 'Sign up failed');
         } finally {
-
+            setLoading(false);
         }
-        Alert.alert('Login', role);
     }
     return (
         <SafeScreen>
@@ -44,63 +54,41 @@ const SignUp = () => {
                     <View
                         style={{ paddingTop: moderateScale(20), gap: moderateScale(15) }}
                     >
-                        <View>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >Name
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your name'
-                                placeholderTextColor={`${placeholderColor}`}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
-                        <View>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >Email
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your email'
-                                keyboardType='email-address'
-                                autoCapitalize='none'
-                                autoCorrect={false}
-                                placeholderTextColor={`${placeholderColor}`}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
-                        <View>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >Phone Number
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your phone number'
-                                keyboardType='phone-pad'
-                                autoCapitalize='none'
-                                autoCorrect={false}
-                                placeholderTextColor={`${placeholderColor}`}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
-                        <View>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >Password
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your password'
-                                placeholderTextColor={`${placeholderColor}`}
-                                secureTextEntry
-                                autoCapitalize='none'
-                                autoCorrect={false}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
+                        <Input
+                            label="Name"
+                            placeholder="Enter your name"
+                            value={name}
+                            onChangeText={setName}
+                            required
+                        />
+                        <Input
+                            label="Email"
+                            placeholder="Enter your email"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={email}
+                            onChangeText={setEmail}
+                            required
+                        />
+                        <Input
+                            label="Phone Number"
+                            placeholder="Enter your phone number"
+                            keyboardType="phone-pad"
+                            value={phone}
+                            onChangeText={setPhone}
+                            required
+                        />
+                        <Input
+                            label="Password"
+                            placeholder="Enter your password"
+                            secureTextEntry
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={password}
+                            onChangeText={setPassword}
+                            required
+                        />
                         {/* role */}
                         <View>
                             <Text
@@ -142,17 +130,13 @@ const SignUp = () => {
                             </View>
                         </View>
                         {/* button */}
-                        <TouchableOpacity
-                            onPress={login}
-                            activeOpacity={0.5}
-                            style={{ backgroundColor: `${primaryColor}`, padding: moderateScale(10), borderRadius: moderateScale(10) }}
-                        >
-                            <Text
-                                className='text-white text-center'
-                                style={{ fontSize: moderateScale(14) }}
-                            >Sign Up
-                            </Text>
-                        </TouchableOpacity>
+                        <Button
+                            title="Sign Up"
+                            onPress={handleSignUp}
+                            loading={loading}
+                            disabled={loading}
+                            size="medium"
+                        />
                     </View>
                     {/* line */}
                     <View

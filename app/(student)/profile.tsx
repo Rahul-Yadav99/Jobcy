@@ -3,14 +3,15 @@ import BackButton from '@/components/BackButton';
 import EditButton from '@/components/EditButton';
 import ModalCloseButton from '@/components/ModalCloseButton';
 import SafeScreen from '@/components/SafeScreen';
+import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import { profileService } from '@/services/profileService';
-import { placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
+import { primaryTextColor, secondaryTextColor } from '@/utils/theme';
 import * as DocumentPicker from 'expo-document-picker';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, LogOut, Mail, Phone } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Image, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Profile = () => {
@@ -231,25 +232,15 @@ const Profile = () => {
                             </TouchableOpacity>
                         )}
                     </View>
-                    <TouchableOpacity
-                        activeOpacity={0.5}
+                    <Button
+                        title="Logout"
                         onPress={logout}
-                        className='border border-neutral-200 rounded-lg'
-                        style={{
-                            marginTop: moderateScale(16),
-                            padding: moderateScale(10),
-                            borderRadius: moderateScale(10),
-                            alignItems: 'center',
-                            backgroundColor: primaryColor
-                        }}
-                    >
-                        <View className='flex-row items-center gap-2'>
-                            <LogOut size={moderateScale(16)} color="white" />
-                            <Text style={{ color: 'white', fontSize: moderateScale(14) }}>
-                                Logout
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
+                        variant="danger"
+                        size="medium"
+                        fullWidth
+                        style={{ marginTop: moderateScale(16) }}
+                        icon={<LogOut size={moderateScale(16)} color="white" />}
+                    />
                 </ScrollView>
             </View>
             <Modal
@@ -272,62 +263,39 @@ const Profile = () => {
                             borderRadius: moderateScale(50),
                             alignSelf: 'center',
                         }} />
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>Name</Text>
-                            <TextInput
-                                placeholder='Enter your name'
-                                placeholderTextColor={`${placeholderColor}`}
+                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1), gap: moderateScale(12) }}>
+                            <Input
+                                label="Name"
+                                placeholder="Enter your name"
                                 value={fullName}
                                 onChangeText={setFullName}
                                 autoCorrect={false}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                                required
                             />
-                        </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>Email</Text>
-                            <TextInput
-                                placeholder='Enter your email'
-                                placeholderTextColor={`${placeholderColor}`}
+                            <Input
+                                label="Email"
+                                placeholder="Enter your email"
                                 value={email}
                                 onChangeText={setEmail}
                                 autoCorrect={false}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                                keyboardType="email-address"
+                                required
                             />
-                        </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>College</Text>
-                            <TextInput
-                                placeholder='Enter your college name'
-                                placeholderTextColor={`${placeholderColor}`}
+                            <Input
+                                label="College"
+                                placeholder="Enter your college name"
                                 value={collegeName}
                                 onChangeText={setCollegeName}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
                             />
-                        </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>Current Company</Text>
-                            <TextInput
-                                placeholder='Enter your current company name'
-                                placeholderTextColor={`${placeholderColor}`}
+                            <Input
+                                label="Current Company"
+                                placeholder="Enter your current company name"
                                 value={currentCompanyName}
                                 onChangeText={setCurrentCompanyName}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
                             />
-                        </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >
-                                Phone Number
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your phone number'
-                                placeholderTextColor={placeholderColor}
+                            <Input
+                                label="Phone Number"
+                                placeholder="Enter your phone number"
                                 value={phoneNumber}
                                 keyboardType="phone-pad"
                                 maxLength={10}
@@ -335,56 +303,39 @@ const Profile = () => {
                                     const cleaned = text.replace(/[^0-9]/g, "");
                                     setPhoneNumber(cleaned);
                                 }}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                                required
                             />
-                        </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>Bio</Text>
-                            <TextInput
-                                placeholder='Enter your bio'
-                                placeholderTextColor={`${placeholderColor}`}
+                            <Input
+                                label="Bio"
+                                placeholder="Enter your bio"
                                 value={bio}
                                 onChangeText={setBio}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
+                                multiline
+                                numberOfLines={3}
+                            />
+                            <View>
+                                <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                    className='font-semibold'>
+                                    Resume
+                                </Text>
+
+                                <TouchableOpacity
+                                    onPress={pickResume}
+                                    className='border border-neutral-300 rounded-lg px-4 py-3 mt-2'
+                                >
+                                    <Text style={{ color: secondaryTextColor }}>
+                                        {resume?.name ? resume.name : "Select Resume (PDF/DOC)"}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Button
+                                title="Update Profile"
+                                onPress={handleUpdateProfile}
+                                loading={loading}
+                                disabled={loading}
+                                size="medium"
                             />
                         </View>
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1) }}>
-                            <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'>
-                                Resume
-                            </Text>
-
-                            <TouchableOpacity
-                                onPress={pickResume}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2'
-                            >
-                                <Text style={{ color: secondaryTextColor }}>
-                                    {resume?.name ? resume.name : "Select Resume (PDF/DOC)"}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                        <TouchableOpacity
-                            disabled={loading}
-                            onPress={handleUpdateProfile}
-                            activeOpacity={0.5}
-                            style={{ backgroundColor: `${primaryColor}`, padding: moderateScale(10), borderRadius: moderateScale(10), marginTop: moderateScale(16) }}
-                        >
-                            {
-                                loading ? (
-                                    <ActivityIndicator
-                                        color={"white"}
-                                        size={'small'}
-                                    />
-                                ) : (
-                                    <Text
-                                        className='text-white text-center'
-                                        style={{ fontSize: moderateScale(14) }}
-                                    >Update Profile
-                                    </Text>
-                                )
-                            }
-                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </Modal>

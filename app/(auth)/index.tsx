@@ -1,12 +1,13 @@
 import authApi from '@/api/auth';
 import SafeScreen from '@/components/SafeScreen';
+import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import { disabledColor, placeholderColor, primaryColor, primaryTextColor, secondaryTextColor } from '@/utils/theme';
 import { typography } from '@/utils/typography';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, Alert, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const Login = () => {
@@ -63,40 +64,26 @@ const Login = () => {
                     <View
                         style={{ paddingTop: moderateScale(20), gap: moderateScale(15) }}
                     >
-                        <View>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >Email
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your email'
-                                keyboardType='email-address'
-                                autoCapitalize='none'
-                                autoCorrect={false}
-                                value={email}
-                                onChangeText={setEmail}
-                                placeholderTextColor={`${placeholderColor}`}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
-                        <View>
-                            <Text
-                                style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                className='font-semibold'
-                            >Password
-                            </Text>
-                            <TextInput
-                                placeholder='Enter your password'
-                                placeholderTextColor={`${placeholderColor}`}
-                                secureTextEntry
-                                autoCapitalize='none'
-                                autoCorrect={false}
-                                value={password}
-                                onChangeText={setPassword}
-                                className='border border-neutral-300 rounded-lg px-4 py-3 mt-2 text-neutral-700'
-                            />
-                        </View>
+                        <Input
+                            label="Email"
+                            placeholder="Enter your email"
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={email}
+                            onChangeText={setEmail}
+                            required
+                        />
+                        <Input
+                            label="Password"
+                            placeholder="Enter your password"
+                            secureTextEntry
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                            value={password}
+                            onChangeText={setPassword}
+                            required
+                        />
                         {/* role */}
                         <View>
                             <Text
@@ -138,27 +125,13 @@ const Login = () => {
                             </View>
                         </View>
                         {/* button */}
-                        <TouchableOpacity
-                            disabled={loading}
+                        <Button
+                            title="Sign In"
                             onPress={login}
-                            activeOpacity={0.5}
-                            style={{ backgroundColor: `${primaryColor}`, padding: moderateScale(10), borderRadius: moderateScale(10) }}
-                        >
-                            {
-                                loading ? (
-                                    <ActivityIndicator
-                                        color={"white"}
-                                        size={'small'}
-                                    />
-                                ) : (
-                                    <Text
-                                        className='text-white text-center'
-                                        style={{ fontSize: moderateScale(14) }}
-                                    >Sign In
-                                    </Text>
-                                )
-                            }
-                        </TouchableOpacity>
+                            loading={loading}
+                            disabled={loading}
+                            size="medium"
+                        />
                     </View>
                     {/* line */}
                     <View

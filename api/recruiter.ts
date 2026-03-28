@@ -28,6 +28,31 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    deleteCompany: async (companyId: string) => {
+        try {
+            const response = await axios.delete(`${COMPANY_API_END_POINT}/delete/${companyId}`, {
+                withCredentials: true,
+            })
+            return response.data.message;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    updateCompany: async (companyId: string, payload: any) => {
+        try {
+            const response = await axios.put(`${COMPANY_API_END_POINT}/update/${companyId}`, payload, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
+            return response.data.company;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 

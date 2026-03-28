@@ -3,12 +3,13 @@ import CompanyCard from '@/components/CompanyCard'
 import Header from '@/components/Header'
 import ModalCloseButton from '@/components/ModalCloseButton'
 import SafeScreen from '@/components/SafeScreen'
-import { colors, fontSize, spacing } from '@/utils/theme'
+import { Button, Input } from '@/components/ui'
+import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Plus } from 'lucide-react-native'
 import React from 'react'
-import { Alert, FlatList, Modal, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, FlatList, Modal, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 
 const RecruiterHome = () => {
@@ -122,50 +123,25 @@ const RecruiterHome = () => {
                             marginTop: spacing.md,
                         }}
                     >
-                        <Text style={{
-                            color: colors.primaryTextColor,
-                            fontSize: fontSize.md,
-                            fontWeight: '600',
-                        }}>
-                            Company Name
-                        </Text>
-                        <TextInput
-                            placeholder='Enter company name'
+                        <Input
+                            label="Company Name"
+                            placeholder="Enter company name"
                             value={companyName}
                             onChangeText={setCompanyName}
-                            editable={!isPending} // ✅ Disable input while loading
-                            style={{
-                                borderWidth: 1,
-                                borderColor: colors.disabledColor,
-                                padding: spacing.sm,
-                                borderRadius: spacing.sm,
-                                marginTop: spacing.xs,
-                            }}
+                            editable={!isPending}
+                            required
                         />
                     </View>
 
                     {/* ✅ onPress connected + disabled while loading */}
-                    <TouchableOpacity
+                    <Button
+                        title="Create Company"
                         onPress={handleCreateCompany}
+                        loading={isPending}
                         disabled={isPending}
-                        activeOpacity={0.5}
-                        style={{
-                            marginTop: spacing.md,
-                            backgroundColor: isPending ? colors.disabledColor : colors.primaryColor,
-                            padding: spacing.sm,
-                            borderRadius: spacing.sm,
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text
-                            style={{
-                                color: 'white',
-                                fontWeight: '600',
-                            }}
-                        >
-                            {isPending ? 'Creating...' : 'Create Company'} {/* ✅ Loading text */}
-                        </Text>
-                    </TouchableOpacity>
+                        size="medium"
+                        style={{ marginTop: spacing.md }}
+                    />
                 </View>
             </Modal>
         </SafeScreen>
