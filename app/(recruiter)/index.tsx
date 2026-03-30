@@ -1,5 +1,6 @@
 import recruiterApi from '@/api/recruiter'
 import CompanyCard from '@/components/CompanyCard'
+import { CompanyCardSkeletonList } from '@/components/CompanyCardSkeleton'
 import Header from '@/components/Header'
 import ModalCloseButton from '@/components/ModalCloseButton'
 import SafeScreen from '@/components/SafeScreen'
@@ -51,7 +52,14 @@ const RecruiterHome = () => {
     }
 
     if (isLoading) {
-        return <Text>Loading...</Text>;
+        return (
+            <SafeScreen>
+                <Header />
+                <View style={{ flex: 1, paddingHorizontal: spacing.md, paddingTop: spacing.md }}>
+                    <CompanyCardSkeletonList />
+                </View>
+            </SafeScreen>
+        );
     }
 
     if (error) {
