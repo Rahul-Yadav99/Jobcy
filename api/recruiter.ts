@@ -1,4 +1,4 @@
-import { COMPANY_API_END_POINT } from "@/utils/constant";
+import { APPLICATION_API_END_POINT, COMPANY_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
 
 const recruiterApi = {
@@ -50,6 +50,45 @@ const recruiterApi = {
                 },
             })
             return response.data.company;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    getAllJobs: async () => {
+        try {
+            const response = await axios.get(`${JOB_API_END_POINT}/getadminjobs`, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.jobs;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    getApplications: async (jobId: string) => {
+        try {
+            const response = await axios.get(`${APPLICATION_API_END_POINT}/${jobId}/applicants`, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.job.applications;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    deleteJob: async (jobId: string) => {
+        try {
+            const response = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, {
+                withCredentials: true,
+            })
+            return response.data.message;
         } catch (error: any) {
             throw error.response.data.message;
         }

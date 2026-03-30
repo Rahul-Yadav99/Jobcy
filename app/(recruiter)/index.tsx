@@ -1,6 +1,8 @@
 import recruiterApi from '@/api/recruiter'
 import CompanyCard from '@/components/CompanyCard'
 import { CompanyCardSkeletonList } from '@/components/CompanyCardSkeleton'
+import Empty from '@/components/Empty'
+import ErrorScreen from '@/components/ErrorScreen'
 import Header from '@/components/Header'
 import ModalCloseButton from '@/components/ModalCloseButton'
 import SafeScreen from '@/components/SafeScreen'
@@ -20,7 +22,7 @@ const RecruiterHome = () => {
     const [modalVisible, setModalVisible] = React.useState(false); // ✅ false by default
     const [companyName, setCompanyName] = React.useState('');
 
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['companies'],
         queryFn: recruiterApi.getAllCompanies,
     })
@@ -63,7 +65,7 @@ const RecruiterHome = () => {
     }
 
     if (error) {
-        return <Text>Error: {error.message}</Text>;
+        return <ErrorScreen message={error.message} onRetry={refetch} />;
     }
 
     return (
@@ -88,6 +90,9 @@ const RecruiterHome = () => {
                     ListHeaderComponentStyle={{
                         marginVertical: spacing.md,
                     }}
+                    ListEmptyComponent={
+                        <Empty message='Add your first company to get started' />
+                    }
                 />
                 <TouchableOpacity
                     onPress={() => setModalVisible(true)}

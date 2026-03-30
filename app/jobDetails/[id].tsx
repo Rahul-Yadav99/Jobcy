@@ -7,13 +7,14 @@ import { profileService } from '@/services/profileService';
 import { formatDate } from '@/utils/formateDate';
 import { colors, fontSize, headingSize, primaryColor, primaryTextColor, spacing } from '@/utils/theme';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Briefcase, Calendar, IndianRupee, LaptopMinimal, MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
 
 const JobDetails = () => {
+    const router = useRouter();
     const { id: jobId } = useLocalSearchParams();
     const [user, setUser] = useState<any>(null);
     const queryClient = useQueryClient();
@@ -327,27 +328,46 @@ const JobDetails = () => {
                             {job.applications?.length || 0}
                         </Text>
                     </View>
-                    <TouchableOpacity
-                        disabled={isApplied || isPending}
-                        onPress={async () => {
-                            try {
-                                await applyJob();
-                            } catch (error) {
-                                console.error("Error applying:", error);
-                            }
-                        }}
-                        style={{
-                            marginTop: spacing.md,
-                            backgroundColor: isApplied || isPending ? '#ccc' : primaryColor,
-                            padding: spacing.md,
-                            borderRadius: spacing.md,
-                            alignItems: 'center',
-                        }}
-                    >
-                        <Text style={{ color: '#fff', fontSize: fontSize.md }}>
-                            {isPending ? "Applying..." : isApplied ? "Already Applied" : "Apply for this job"}
-                        </Text>
-                    </TouchableOpacity>
+                    {
+                        user?.role === 'recruiter' ? (
+                            <TouchableOpacity
+                                activeOpacity={0.9}
+                                onPress={() => router.push(`/applications/${job?._id}` as any)}
+                                style={{
+                                    marginTop: spacing.md,
+                                    backgroundColor: primaryColor,
+                                    padding: spacing.md,
+                                    borderRadius: spacing.md,
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <Text style={{ color: '#fff', fontSize: fontSize.md }}>View Applications</Text>
+                            </TouchableOpacity>
+                        ) :
+                            (
+                                <TouchableOpacity
+                                    disabled={isApplied || isPending}
+                                    onPress={async () => {
+                                        try {
+                                            await applyJob();
+                                        } catch (error) {
+                                            console.error("Error applying:", error);
+                                        }
+                                    }}
+                                    style={{
+                                        marginTop: spacing.md,
+                                        backgroundColor: isApplied || isPending ? '#ccc' : primaryColor,
+                                        padding: spacing.md,
+                                        borderRadius: spacing.md,
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Text style={{ color: '#fff', fontSize: fontSize.md }}>
+                                        {isPending ? "Applying..." : isApplied ? "Already Applied" : "Apply for this job"}
+                                    </Text>
+                                </TouchableOpacity>
+                            )
+                    }
                 </ScrollView>
             </View>
         </SafeScreen>

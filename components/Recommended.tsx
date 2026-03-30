@@ -8,7 +8,7 @@ const Recommended = () => {
     return (
         <View
             style={{
-                paddingHorizontal: moderateScale(20),
+                // paddingHorizontal: moderateScale(20),
                 marginBottom: moderateScale(10),
             }}
         >

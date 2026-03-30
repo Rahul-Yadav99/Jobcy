@@ -6,7 +6,7 @@ import JobCard from '@/components/JobCard';
 import { JobCardSkeletonList } from '@/components/Jobcardskeleton';
 import Recommended from '@/components/Recommended';
 import SafeScreen from '@/components/SafeScreen';
-import { primaryColor } from '@/utils/theme';
+import { primaryColor, spacing } from '@/utils/theme';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
@@ -58,27 +58,34 @@ const Home = () => {
     return (
         <SafeScreen>
             <Header />
-            <FlatList
-                data={isLoading ? [] : (data || [])}
-                renderItem={({ item }) => <JobCard job={item} />}
-                keyExtractor={(item) => item._id}
-                showsVerticalScrollIndicator={false}
-                ListHeaderComponent={
-                    <>
-                        <HeaderCard />
-                        <Recommended />
-                        {isLoading && <JobCardSkeletonList count={6} />}
-                    </>
-                }
-                ListEmptyComponent={
-                    !isLoading ? (
-                        <Empty
-                            isDetailsScreen={false}
-                            message='No jobs found'
-                        />
-                    ) : null
-                }
-            />
+            <View
+                style={{
+                    flex: 1,
+                    paddingHorizontal: spacing.md,
+                }}
+            >
+                <FlatList
+                    data={isLoading ? [] : (data || [])}
+                    renderItem={({ item }) => <JobCard job={item} />}
+                    keyExtractor={(item) => item._id}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <>
+                            <HeaderCard />
+                            <Recommended />
+                            {isLoading && <JobCardSkeletonList count={6} />}
+                        </>
+                    }
+                    ListEmptyComponent={
+                        !isLoading ? (
+                            <Empty
+                                isDetailsScreen={false}
+                                message='No jobs found'
+                            />
+                        ) : null
+                    }
+                />
+            </View>
         </SafeScreen>
     );
 };

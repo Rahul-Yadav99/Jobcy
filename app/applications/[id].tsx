@@ -1,0 +1,73 @@
+import recruiterApi from '@/api/recruiter';
+import ApplicantCard from '@/components/ApplicantCard';
+import { ApplicantCardSkeletonList } from '@/components/ApplicantCardSkeleton';
+import BackButton from '@/components/BackButton';
+import Empty from '@/components/Empty';
+import ErrorScreen from '@/components/ErrorScreen';
+import SafeScreen from '@/components/SafeScreen';
+import { colors, headingSize, spacing } from '@/utils/theme';
+import { useQuery } from '@tanstack/react-query';
+import { useLocalSearchParams } from 'expo-router';
+import React from 'react';
+import { FlatList, Text, View } from 'react-native';
+
+const Applications = () => {
+    const { id: jobId } = useLocalSearchParams();
+
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['applications', jobId],
+        queryFn: () => recruiterApi.getApplications(jobId as string)
+    })
+
+    if (error) {
+        return <ErrorScreen message={error.message} onRetry={refetch} />;
+    }
+
+    return (
+        <SafeScreen>
+            <View
+                style={{
+                    padding: spacing.md,
+                    flex: 1,
+                }}
+            >
+                <FlatList
+                    data={isLoading ? [] : (data || [])}
+                    keyExtractor={(item) => item._id}
+                    renderItem={({ item }) => <ApplicantCard item={item} />}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <>
+                            <View
+                                className="flex-row items-center"
+                                style={{ marginBottom: spacing.md }}
+                            >
+                                <BackButton />
+                                <Text
+                                    className="capitalize"
+                                    style={{
+                                        flex: 1,
+                                        fontSize: headingSize.h2,
+                                        fontWeight: 'bold',
+                                        color: colors.primaryTextColor,
+                                        marginLeft: spacing.md,
+                                    }}
+                                >
+                                    Applications
+                                </Text>
+                            </View>
+                            {isLoading && <ApplicantCardSkeletonList />}
+                        </>
+                    }
+                    ListEmptyComponent={
+                        !isLoading ? (
+                            <Empty message="No applications yet" />
+                        ) : null
+                    }
+                />
+            </View>
+        </SafeScreen>
+    )
+}
+
+export default Applications

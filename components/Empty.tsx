@@ -1,4 +1,4 @@
-import { primaryTextColor } from '@/utils/theme'
+import { typography } from '@/utils/typography'
 import React from 'react'
 import { Image, Text, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
@@ -35,7 +35,7 @@ const Empty = ({ message, isDetailsScreen }: { message: string, isDetailsScreen?
                     }}
                     resizeMode='contain'
                 />
-                <Text style={{ color: primaryTextColor, fontSize: moderateScale(14), textAlign: 'center' }}>{message}</Text>
+                <Text style={typography.body}>{message}</Text>
             </View>
         </SafeScreen>
 

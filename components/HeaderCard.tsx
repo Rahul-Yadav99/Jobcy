@@ -14,9 +14,9 @@ const HeaderCard = () => {
             pagingEnabled
             snapToInterval={CARD_WIDTH + SPACING}
             decelerationRate="fast"
-            contentContainerStyle={{
-                paddingHorizontal: SPACING,
-            }}
+            // contentContainerStyle={{
+            //     // paddingHorizontal: SPACING,
+            // }}
             style={{
                 flexGrow: 0
             }}

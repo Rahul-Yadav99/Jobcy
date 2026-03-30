@@ -50,7 +50,7 @@ const JobCardSkeleton = () => {
             style={{
                 marginBottom: moderateScale(10),
                 padding: moderateScale(10),
-                marginHorizontal: moderateScale(20),
+                // marginHorizontal: moderateScale(20),
                 borderWidth: 1,
                 borderColor: '#E5E5E5',
                 borderRadius: moderateScale(12),
