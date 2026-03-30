@@ -1,6 +1,6 @@
 import recruiterApi from '@/api/recruiter'
 import { Button, Input } from '@/components/ui'
-import { formatDate } from '@/utils/formateDate'
+import { formatDate } from '@/utils/formatDate'
 import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'

@@ -3,10 +3,11 @@ import { formatChatTime } from '@/utils/formatChatTime'
 import { colors, headingSize, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { CheckCheck } from 'lucide-react-native'
 import React from 'react'
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Text, View } from 'react-native'
 
-const NotificationCard = ({ item }: { item: any }) => {
+const MessageCard = ({ item }: { item: any }) => {
 
     const queryClient = useQueryClient();
 
@@ -78,7 +79,7 @@ const NotificationCard = ({ item }: { item: any }) => {
                                 alignItems: 'center',
                             }}
                         >
-                            <Text style={typography.h4}>{item?.sender?.fullname?.charAt(0).toUpperCase() ?? 'S'}</Text>
+                            <Text style={typography.h4}>{item?.recipient?.fullname?.charAt(0).toUpperCase() ?? 'S'}</Text>
                         </View>
                         <View
                             style={{
@@ -95,47 +96,27 @@ const NotificationCard = ({ item }: { item: any }) => {
                                         color: colors.primaryTextColor,
                                     }}
                                 >
-                                    {item?.sender?.fullname}
+                                    {item?.recipient?.fullname ?? 'Student'}
                                 </Text>
                                 <Text style={typography.body}>{normalizeType(item?.type)}
                                 </Text>
                             </View>
-                            <Text style={{ color: colors.secondaryTextColor }}>{formatChatTime(item?.createdAt)}</Text>
+                            {
+                                item?.isRead ? (
+                                    <CheckCheck size={20} color={colors.primaryColor} />
+                                ) : (
+                                    <CheckCheck size={20} color={colors.disabledColor} />
+                                )
+                            }
+
                         </View>
                     </View>
                 </View>
-                <Text>{item?.message}</Text>
-                {
-                    !item?.isRead && (
-                        <TouchableOpacity
-                            activeOpacity={0.5}
-                            onPress={() => markAsRead(item._id)}
-                            style={{
-                                backgroundColor: colors.primaryColor,
-                                padding: spacing.sm,
-                                borderRadius: spacing.sm,
-                            }}
-                        >
-                            {
-                                isPending ? <ActivityIndicator size="small" color="#fff" /> :
-                                    <Text
-                                        style={{
-                                            color: '#fff',
-                                            fontWeight: '600',
-                                            textAlign: 'center',
-                                        }}
-                                    >
-                                        Mark as read
-                                    </Text>
-                            }
-
-                        </TouchableOpacity>
-                    )
-                }
-
+                <Text>{item?.message ?? 'No message'}</Text>
+                <Text style={{ color: colors.secondaryTextColor }}>{formatChatTime(item?.createdAt)}</Text>
             </View>
         </View>
     )
 }
 
-export default NotificationCard
+export default MessageCard

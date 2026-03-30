@@ -19,7 +19,7 @@ const Header = () => {
                 <Text
                     style={typography.h2}
                 >
-                    Hi {user?.fullname || 'User'}!
+                    Hi {user?.fullname || 'User'} !
                 </Text>
                 <Text
                     style={typography.body}

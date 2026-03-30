@@ -1,4 +1,4 @@
-import { APPLICATION_API_END_POINT, COMPANY_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant";
+import { APPLICATION_API_END_POINT, BASE_API_END_POINT, COMPANY_API_END_POINT, DASH_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant";
 import axios from "axios";
 
 const recruiterApi = {
@@ -117,6 +117,34 @@ const recruiterApi = {
                 }
             })
             return response.data.message;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    getMessage: async () => {
+        try {
+            const response = await axios.get(`${BASE_API_END_POINT}/message`, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.data;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
+    },
+
+    getDashboard: async () => {
+        try {
+            const response = await axios.get(`${DASH_API_END_POINT}`, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data;
         } catch (error: any) {
             throw error.response.data.message;
         }

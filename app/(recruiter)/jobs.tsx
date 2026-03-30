@@ -264,7 +264,7 @@ const Jobs = () => {
                                     fontWeight: '600',
                                 }}
                             >
-                                Job Type <Text style={{ color: '#ef4444' }}>*</Text>
+                                Job Type <Text style={{ color: colors.primaryColor }}>*</Text>
                             </Text>
                             <TouchableOpacity
                                 onPress={() => { setJobTypeDropdownOpen(!jobTypeDropdownOpen); setCompanyDropdownOpen(false); }}
@@ -344,7 +344,7 @@ const Jobs = () => {
                                     fontWeight: '600',
                                 }}
                             >
-                                Company <Text style={{ color: '#ef4444' }}>*</Text>
+                                Company <Text style={{ color: colors.primaryColor }}>*</Text>
                             </Text>
                             <TouchableOpacity
                                 onPress={() => { setCompanyDropdownOpen(!companyDropdownOpen); setJobTypeDropdownOpen(false); }}

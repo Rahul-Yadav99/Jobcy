@@ -1,6 +1,6 @@
 import recruiterApi from '@/api/recruiter'
 import { useProfile } from '@/hooks/useProfile'
-import { formatDate } from '@/utils/formateDate'
+import { formatDate } from '@/utils/formatDate'
 import { formatExperience } from '@/utils/formatExp'
 import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
@@ -91,7 +91,7 @@ const JobCard = ({ job }: { job: any }) => {
                 }}
             >
                 <IndianRupee size={moderateScale(13)} color={colors.secondaryTextColor} />
-                <Text style={{ textTransform: 'capitalize', ...typography.h5 }}>{job?.salary ?? '3.5 LPA'} / Exp {formatExperience(job?.experienceLevel)}</Text>
+                <Text style={{ textTransform: 'capitalize', ...typography.h5 }}>{job?.salary ?? '3.5 LPA'} / Exp : {formatExperience(job?.experienceLevel)}</Text>
             </View>
 
             <View

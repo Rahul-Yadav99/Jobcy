@@ -4,7 +4,7 @@ import Empty from '@/components/Empty';
 import JobDetailsSkeleton from '@/components/Jobdetailsskeleton';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
-import { formatDate } from '@/utils/formateDate';
+import { formatDate } from '@/utils/formatDate';
 import { colors, fontSize, headingSize, primaryColor, primaryTextColor, spacing } from '@/utils/theme';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';

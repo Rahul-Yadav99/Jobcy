@@ -1,4 +1,4 @@
-import { formatDate } from '@/utils/formateDate'
+import { formatDate } from '@/utils/formatDate'
 import { colors, primaryTextColor, secondaryTextColor, spacing } from '@/utils/theme'
 import { useRouter } from 'expo-router'
 import { Calendar, IndianRupee, MapPin } from 'lucide-react-native'
