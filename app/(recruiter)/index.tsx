@@ -84,7 +84,7 @@ const RecruiterHome = () => {
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <Text style={typography.h3}>
-                            Companies
+                            Companies ({data?.length ?? 0})
                         </Text>
                     }
                     ListHeaderComponentStyle={{

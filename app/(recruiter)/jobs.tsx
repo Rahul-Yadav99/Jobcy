@@ -34,7 +34,7 @@ const Jobs = () => {
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <Text style={typography.h3}>
-                            Jobs
+                            Jobs ({data?.length ?? 0})
                         </Text>
                     }
                     ListHeaderComponentStyle={{

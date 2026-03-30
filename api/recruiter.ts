@@ -92,6 +92,20 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    updateApplicationStatus: async (applicationId: string, status: string) => {
+        try {
+            const response = await axios.post(`${APPLICATION_API_END_POINT}/status/${applicationId}/update`, { status }, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.message;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 

@@ -39,7 +39,6 @@ const JobCard = ({ job }: { job: any }) => {
         <TouchableOpacity
             activeOpacity={0.9}
             onPress={() => router.push(`/jobDetails/${job._id}`)}
-            // className='border border-neutral-300 rounded-xl'
             style={{
                 padding: spacing.md,
                 borderWidth: 1,

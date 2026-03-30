@@ -1,24 +1,43 @@
+import recruiterApi from '@/api/recruiter'
 import { formatDate } from '@/utils/formateDate'
 import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as WebBrowser from 'expo-web-browser'
-import { Calendar, FileText, Mail, Phone } from 'lucide-react-native'
-import React from 'react'
-import { Alert, Text, TouchableOpacity, View } from 'react-native'
+import { Calendar, ChevronDown, FileText, Mail, Phone } from 'lucide-react-native'
+import React, { useState } from 'react'
+import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 
 const statusColors: Record<string, { bg: string; text: string }> = {
     pending: { bg: '#FEF3C7', text: '#D97706' },
     accepted: { bg: '#D1FAE5', text: '#059669' },
     rejected: { bg: '#FEE2E2', text: '#DC2626' },
-    viewed: { bg: '#eff6ff', text: '#1d4ed8' },
+    viewed: { bg: '#EFF6FF', text: '#1D4ED8' },
 }
+
+const statusOptions = ['pending', 'accepted', 'rejected'] as const
 
 const ApplicantCard = ({ item }: { item: any }) => {
     const applicant = item?.applicant
     const status = item?.status?.toLowerCase() || 'pending'
     const color = statusColors[status] || statusColors.pending
     const resumeUrl = applicant?.profile?.resume
+    const queryClient = useQueryClient()
+    const [dropdownOpen, setDropdownOpen] = useState(false)
+
+    const { mutate: updateStatus, isPending: isUpdating } = useMutation({
+        mutationFn: (newStatus: string) => recruiterApi.updateApplicationStatus(item._id, newStatus),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['applications']
+            })
+            setDropdownOpen(false)
+        },
+        onError: (error: string) => {
+            Alert.alert('Error', error || 'Failed to update application status. Please try again.');
+        }
+    })
 
     const openResume = async () => {
         if (!resumeUrl) {
@@ -26,6 +45,9 @@ const ApplicantCard = ({ item }: { item: any }) => {
             return
         }
         try {
+            if (status !== 'viewed' && status !== 'accepted') {
+                updateStatus('viewed');
+            }
             await WebBrowser.openBrowserAsync(resumeUrl)
         } catch {
             Alert.alert('Error', 'Unable to open resume.')
@@ -103,7 +125,7 @@ const ApplicantCard = ({ item }: { item: any }) => {
                             fontWeight: '600',
                         }}
                     >
-                        {status}
+                        {isUpdating ? 'Updating...' : status}
                     </Text>
                 </View>
             </View>
@@ -150,35 +172,134 @@ const ApplicantCard = ({ item }: { item: any }) => {
             </View>
 
             {/* Resume */}
-            {
-                applicant?.profile?.resume && (
+            {applicant?.profile?.resume && (
+                <TouchableOpacity
+                    onPress={openResume}
+                    activeOpacity={0.7}
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: spacing.xs,
+                        backgroundColor: colors.backgroundGray,
+                        paddingVertical: spacing.sm,
+                        paddingHorizontal: spacing.sm,
+                        borderRadius: spacing.xs,
+                        marginBottom: spacing.sm,
+                    }}
+                >
+                    <FileText size={moderateScale(14)} color={colors.primaryColor} />
+                    <Text
+                        style={{
+                            fontSize: moderateScale(12),
+                            fontWeight: '600',
+                            color: colors.primaryColor,
+                        }}
+                    >
+                        View Resume
+                    </Text>
+                </TouchableOpacity>
+            )}
+
+            {/* Status Dropdown — only show when resume is available */}
+            {resumeUrl && (
+                <View>
                     <TouchableOpacity
-                        onPress={openResume}
+                        onPress={() => setDropdownOpen(!dropdownOpen)}
                         activeOpacity={0.7}
+                        disabled={isUpdating}
                         style={{
                             flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: spacing.xs,
-                            backgroundColor: resumeUrl ? colors.backgroundGray : '#f9fafb',
+                            justifyContent: 'space-between',
+                            borderWidth: 1,
+                            borderColor: colors.disabledColor,
+                            borderRadius: spacing.xs,
                             paddingVertical: spacing.sm,
                             paddingHorizontal: spacing.sm,
-                            borderRadius: spacing.xs,
                         }}
                     >
-                        <FileText size={moderateScale(14)} color={resumeUrl ? colors.primaryColor : colors.disabledColor} />
                         <Text
+                            className="capitalize"
                             style={{
                                 fontSize: moderateScale(12),
                                 fontWeight: '600',
-                                color: resumeUrl ? colors.primaryColor : colors.disabledColor,
+                                color: colors.primaryTextColor,
                             }}
                         >
-                            {resumeUrl ? 'View Resume' : 'No resume uploaded'}
+                            {isUpdating ? 'Updating...' : `Update Status`}
                         </Text>
+                        {isUpdating ? (
+                            <ActivityIndicator size={moderateScale(14)} color={colors.primaryColor} />
+                        ) : (
+                            <ChevronDown
+                                size={moderateScale(16)}
+                                color={colors.secondaryTextColor}
+                                style={{ transform: [{ rotate: dropdownOpen ? '180deg' : '0deg' }] }}
+                            />
+                        )}
                     </TouchableOpacity>
-                )
-            }
+
+                    {dropdownOpen && !isUpdating && (
+                        <View
+                            style={{
+                                borderWidth: 1,
+                                borderColor: colors.disabledColor,
+                                borderRadius: spacing.xs,
+                                marginTop: spacing.xs,
+                                overflow: 'hidden',
+                            }}
+                        >
+                            {statusOptions.map((option) => {
+                                const optColor = statusColors[option]
+                                const isActive = status === option
+                                return (
+                                    <TouchableOpacity
+                                        key={option}
+                                        onPress={() => {
+                                            if (!isActive) {
+                                                updateStatus(option)
+                                            } else {
+                                                setDropdownOpen(false)
+                                            }
+                                        }}
+                                        activeOpacity={0.7}
+                                        style={{
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            paddingVertical: spacing.sm,
+                                            paddingHorizontal: spacing.sm,
+                                            backgroundColor: isActive ? optColor.bg : '#fff',
+                                        }}
+                                    >
+                                        <Text
+                                            className="capitalize"
+                                            style={{
+                                                fontSize: moderateScale(12),
+                                                fontWeight: isActive ? '700' : '500',
+                                                color: isActive ? optColor.text : colors.primaryTextColor,
+                                            }}
+                                        >
+                                            {option}
+                                        </Text>
+                                        {isActive && (
+                                            <View
+                                                style={{
+                                                    width: moderateScale(8),
+                                                    height: moderateScale(8),
+                                                    borderRadius: moderateScale(4),
+                                                    backgroundColor: optColor.text,
+                                                }}
+                                            />
+                                        )}
+                                    </TouchableOpacity>
+                                )
+                            })}
+                        </View>
+                    )}
+                </View>
+            )}
         </View>
     )
 }
