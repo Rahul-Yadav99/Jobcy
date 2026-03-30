@@ -22,6 +22,11 @@ export const typography = StyleSheet.create({
         fontWeight: "600",
         color: colors.primaryTextColor,
     },
+    h5: {
+        fontSize: headingSize.h5,
+        fontWeight: "500",
+        color: colors.secondaryTextColor,
+    },
     body: {
         fontSize: fontSize.sm,
         color: colors.secondaryTextColor,

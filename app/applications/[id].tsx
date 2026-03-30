@@ -5,7 +5,8 @@ import BackButton from '@/components/BackButton';
 import Empty from '@/components/Empty';
 import ErrorScreen from '@/components/ErrorScreen';
 import SafeScreen from '@/components/SafeScreen';
-import { colors, headingSize, spacing } from '@/utils/theme';
+import { spacing } from '@/utils/theme';
+import { typography } from '@/utils/typography';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import React from 'react';
@@ -31,6 +32,21 @@ const Applications = () => {
                     flex: 1,
                 }}
             >
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: spacing.md,
+                        gap: spacing.md,
+                    }}
+                >
+                    <BackButton />
+                    <Text
+                        style={typography.h2}
+                    >
+                        Applications
+                    </Text>
+                </View>
                 <FlatList
                     data={isLoading ? [] : (data || [])}
                     keyExtractor={(item) => item._id}
@@ -38,24 +54,7 @@ const Applications = () => {
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <>
-                            <View
-                                className="flex-row items-center"
-                                style={{ marginBottom: spacing.md }}
-                            >
-                                <BackButton />
-                                <Text
-                                    className="capitalize"
-                                    style={{
-                                        flex: 1,
-                                        fontSize: headingSize.h2,
-                                        fontWeight: 'bold',
-                                        color: colors.primaryTextColor,
-                                        marginLeft: spacing.md,
-                                    }}
-                                >
-                                    Applications
-                                </Text>
-                            </View>
+
                             {isLoading && <ApplicantCardSkeletonList />}
                         </>
                     }

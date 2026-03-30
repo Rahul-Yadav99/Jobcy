@@ -106,6 +106,20 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    postJob: async (payload: any) => {
+        try {
+            const response = await axios.post(`${JOB_API_END_POINT}/post`, payload, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.message;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 

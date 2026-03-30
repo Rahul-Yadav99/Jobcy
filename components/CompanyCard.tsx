@@ -6,7 +6,7 @@ import { typography } from '@/utils/typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as DocumentPicker from 'expo-document-picker'
 import { Link } from 'expo-router'
-import { Globe, ImagePlus, MapPin, SquarePen, Trash } from 'lucide-react-native'
+import { Calendar, Globe, ImagePlus, MapPin, SquarePen, Trash } from 'lucide-react-native'
 import React, { useState } from 'react'
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
@@ -203,13 +203,22 @@ const CompanyCard = ({ item }: { item: any }) => {
                 <MapPin size={moderateScale(15)} color={colors.secondaryTextColor} />
                 <Text style={typography.body}>{item?.location}</Text>
             </View>
-            <Text style={{ color: colors.primaryTextColor }}>{formatDate(item?.createdAt)}</Text>
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <Calendar size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.body }}>{formatDate(item?.createdAt)}</Text>
+            </View>
             <View
                 style={{
                     flexDirection: 'row',
                     justifyContent: 'flex-end',
                     gap: spacing.md,
-                    marginTop: spacing.sm,
                 }}
             >
                 <TouchableOpacity

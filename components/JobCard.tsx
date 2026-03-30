@@ -1,14 +1,15 @@
 import recruiterApi from '@/api/recruiter'
 import { useProfile } from '@/hooks/useProfile'
 import { formatDate } from '@/utils/formateDate'
-import { colors, secondaryTextColor, spacing } from '@/utils/theme'
+import { formatExperience } from '@/utils/formatExp'
+import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
-import { Calendar, IndianRupee, MapPin, Trash } from 'lucide-react-native'
+import { Briefcase, Calendar, IndianRupee, MapPinIcon, Trash, Users } from 'lucide-react-native'
 import React from 'react'
 import { ActivityIndicator, Alert, Image, Text, TouchableOpacity, View } from 'react-native'
-import { moderateScale, verticalScale } from 'react-native-size-matters'
+import { moderateScale } from 'react-native-size-matters'
 
 const JobCard = ({ job }: { job: any }) => {
     const router = useRouter();
@@ -48,21 +49,15 @@ const JobCard = ({ job }: { job: any }) => {
             }}
         >
             <View className='flex-row items-center justify-between'
-                style={{ marginBottom: verticalScale(4) }}
+                style={{ marginBottom: spacing.sm }}
             >
                 <View>
+                    <Text className='capitalize' style={typography.h4}>{job.title}</Text>
                     <Text
-                        className='capitalize' style={typography.h4}
+                        className='capitalize'
+                        style={typography.body}
                     >
-                        {job.title}
-                    </Text>
-                    <Text
-                        className='capitalize text-sm'
-                        style={{
-                            color: secondaryTextColor,
-                        }}
-                    >
-                        {job.company.name}
+                        {job?.company?.name ?? 'Company Name'}
                     </Text>
                 </View>
                 <Image
@@ -74,36 +69,86 @@ const JobCard = ({ job }: { job: any }) => {
                     resizeMode='contain'
                 />
             </View>
-            <View
-                style={{ marginBottom: verticalScale(4) }}
-            >
-                <View className='flex-row items-center gap-2'
-                    style={{ marginBottom: verticalScale(4) }}
-                >
-                    <MapPin size={moderateScale(13)} color={secondaryTextColor} />
-                    <Text className='capitalize text-sm' style={{ color: secondaryTextColor }}>{job.location}</Text>
-                </View>
-                <View className='flex-row items-center gap-4'>
-                    <View className='flex-row items-center gap-1'>
-                        <Calendar size={moderateScale(13)} color={secondaryTextColor} />
-                        <Text className='capitalize text-sm' style={{ color: secondaryTextColor }}>{formatDate(job.createdAt)}</Text>
-                    </View>
-                    <View className='flex-row items-center gap-1'>
-                        <IndianRupee size={moderateScale(13)} color={secondaryTextColor} />
-                        <Text className='capitalize text-sm' style={{ color: secondaryTextColor }}>{job.salary}</Text>
-                    </View>
-                </View>
 
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <MapPinIcon size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.body }}>{job?.location ?? 'New Delhi'}</Text>
             </View>
-            <View>
-                <Text className='capitalize text-sm' style={{ color: secondaryTextColor }}>{job?.jobType}</Text>
+
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <IndianRupee size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.h5 }}>{job?.salary ?? '3.5 LPA'} / Exp {formatExperience(job?.experienceLevel)}</Text>
             </View>
+
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <Briefcase size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.body }}>{job?.jobType ?? 'Full-Time'}</Text>
+            </View>
+
+
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <Users size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.body }}>Positions : {job?.position ?? 1}</Text>
+            </View>
+
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <Users size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.body }}>Applications : {job?.applications?.length ?? 0}</Text>
+            </View>
+
+            <View
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: spacing.xs,
+                    marginBottom: spacing.sm,
+                }}
+            >
+                <Calendar size={moderateScale(13)} color={colors.secondaryTextColor} />
+                <Text style={{ textTransform: 'capitalize', ...typography.body }}>{formatDate(job?.createdAt)}</Text>
+            </View>
+
+            {/* delete button */}
             <View
                 style={{
                     flexDirection: 'row',
                     justifyContent: 'flex-end',
                     gap: spacing.md,
-                    marginTop: spacing.sm,
                 }}
             >
                 {
