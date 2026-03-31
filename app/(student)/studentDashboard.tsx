@@ -115,7 +115,7 @@ const StatusBar = ({ accepted, rejected, pending, total }: any) => {
 }
 
 // ─── Main Dashboard ───
-const RecruiterDashboard = () => {
+const StudentDashboard = () => {
     const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['dashboard'],
         queryFn: studentApi.getStudentDashboardData,
@@ -367,4 +367,4 @@ const RecruiterDashboard = () => {
     )
 }
 
-export default RecruiterDashboard
+export default StudentDashboard
