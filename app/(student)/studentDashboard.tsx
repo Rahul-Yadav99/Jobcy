@@ -1,75 +1,30 @@
 import studentApi from '@/api/student'
+import ErrorScreen from '@/components/ErrorScreen'
 import Header from '@/components/Header'
 import SafeScreen from '@/components/SafeScreen'
-import { colors, fontSize, headingSize, spacing } from '@/utils/theme'
+import { colors, spacing } from '@/utils/theme'
+import { typography } from '@/utils/typography'
 import { useQuery } from '@tanstack/react-query'
+import { Building, CheckCircle, Clock, Eye, TrendingUp, XCircle } from 'lucide-react-native'
 import React, { useEffect, useRef } from 'react'
-import {
-    Animated,
-    Dimensions,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native'
-import { LineChart, PieChart } from 'react-native-chart-kit'
+import { Animated, Dimensions, RefreshControl, ScrollView, Text, View } from 'react-native'
+import { LineChart } from 'react-native-chart-kit'
 import { moderateScale } from 'react-native-size-matters'
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window')
-const CHART_WIDTH = SCREEN_WIDTH - 48
+const SCREEN_WIDTH = Dimensions.get('window').width
 
-// ─── Tokens ───────────────────────────────────────────────────────────────────
-const COLOR = {
-    bg: '#F7F8FC',
-    surface: '#FFFFFF',
-    border: '#EAECF4',
-    textPrimary: colors.primaryTextColor,
-    textSecondary: colors.secondaryTextColor,
-    textMuted: '#9CA3AF',
-    accepted: '#10B981',
-    pending: '#F59E0B',
-    viewed: '#3B82F6',
-    rejected: '#EF4444',
-    success: '#8B5CF6',
-    accent: colors.primaryColor,
-    jobs: '#F97316',
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const formatDayLabel = (dateStr: string) => dateStr.split('-')[2]
-
-const safeChartData = (values: number[]): number[] => {
-    if (!values || values.length === 0) return [0, 0]
-    const hasNonZero = values.some(v => v > 0)
-    if (!hasNonZero) return values.map(() => 0.001)
-    return values
-}
-
-// ─── Skeleton Primitives ──────────────────────────────────────────────────────
-const SkeletonBox = ({
-    width,
-    height,
-    borderRadius = 8,
-    style,
-    anim,
-}: {
-    width: number | string
-    height: number
-    borderRadius?: number
-    style?: object
-    anim: Animated.Value
-}) => {
-    const bg = anim.interpolate({
+// ─── Skeleton Shimmer ───
+const SkeletonBox = ({ width, height, borderRadius = 8, style, shimmerAnim }: any) => {
+    const bg = shimmerAnim.interpolate({
         inputRange: [0, 0.5, 1],
         outputRange: ['#E8E8E8', '#F2F2F2', '#E8E8E8'],
     })
-    return (
-        <Animated.View style={[{ width, height, borderRadius, backgroundColor: bg }, style]} />
-    )
+    return <Animated.View style={[{ width, height, borderRadius, backgroundColor: bg }, style]} />
 }
 
-// ─── Dashboard Skeleton ───────────────────────────────────────────────────────
-const DashboardSkeleton: React.FC = () => {
+// ─── Summary Stat Card ───
+
+const DashboardSkeleton = () => {
     const anim = useRef(new Animated.Value(0)).current
 
     useEffect(() => {
@@ -83,401 +38,333 @@ const DashboardSkeleton: React.FC = () => {
         return () => loop.stop()
     }, [anim])
 
-    const S = (props: Omit<Parameters<typeof SkeletonBox>[0], 'anim'>) => (
-        <SkeletonBox {...props} anim={anim} />
-    )
+    const S = (p: any) => <SkeletonBox {...p} shimmerAnim={anim} />
 
-    const CARD_W = (SCREEN_WIDTH - 40 - 20) / 3
+    const boxWidth = (SCREEN_WIDTH - spacing.md * 2 - spacing.sm * 2) / 3
 
     return (
-        <ScrollView
-            contentContainerStyle={[styles.listContent, { paddingHorizontal: spacing.lg, paddingTop: spacing.lg }]}
-            showsVerticalScrollIndicator={false}
-        >
-            {/* Page title + subtitle */}
-            <S width={moderateScale(140)} height={moderateScale(28)} borderRadius={6} />
-            <S width={moderateScale(190)} height={moderateScale(14)} borderRadius={4} style={{ marginTop: spacing.xs, marginBottom: spacing.lg }} />
+        <ScrollView style={{ flex: 1, padding: spacing.md }} showsVerticalScrollIndicator={false}>
 
-            {/* Summary section label */}
-            <S width={moderateScale(80)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: spacing.md }} />
-
-            {/* 6 stat cards in 3-column grid */}
-            <View style={styles.statsGrid}>
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <View key={i} style={[styles.statCard, { width: CARD_W }]}>
-                        {/* dot */}
-                        <S width={8} height={8} borderRadius={4} style={{ marginBottom: spacing.xs }} />
-                        {/* value */}
-                        <S width={moderateScale(36)} height={moderateScale(22)} borderRadius={4} style={{ marginBottom: spacing.xs }} />
-                        {/* label */}
-                        <S width={moderateScale(48)} height={moderateScale(11)} borderRadius={3} />
-                    </View>
+            {/* Row 1 */}
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: spacing.sm
+            }}>
+                {[1, 2, 3].map(i => (
+                    <S key={i} width={boxWidth} height={moderateScale(90)} />
                 ))}
             </View>
 
-            {/* Pie chart card skeleton */}
-            <View style={[styles.chartCard, { marginTop: spacing.sm }]}>
-                {/* accent bar */}
-                <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
-                <S width={moderateScale(140)} height={moderateScale(14)} borderRadius={4} style={{ marginBottom: spacing.md }} />
-                {/* pie placeholder — circle */}
-                <View style={skeletonStyles.pieRow}>
-                    <S width={moderateScale(140)} height={moderateScale(140)} borderRadius={moderateScale(70)} />
-                    {/* legend */}
-                    <View style={skeletonStyles.legendCol}>
-                        {Array.from({ length: 4 }).map((_, i) => (
-                            <View key={i} style={skeletonStyles.legendRow}>
-                                <S width={10} height={10} borderRadius={5} />
-                                <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} style={{ marginLeft: spacing.sm }} />
-                            </View>
-                        ))}
-                    </View>
-                </View>
+            {/* Row 2 */}
+            <View style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                marginBottom: spacing.lg
+            }}>
+                {[4, 5, 6].map(i => (
+                    <S key={i} width={boxWidth} height={moderateScale(90)} />
+                ))}
             </View>
 
-            {/* Line chart card 1 — Applications Per Day */}
-            <View style={styles.chartCard}>
-                <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
-                <View style={skeletonStyles.chartTitleRow}>
-                    <S width={moderateScale(160)} height={moderateScale(14)} borderRadius={4} />
-                    <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} />
-                </View>
-                <S
-                    width={'100%'}
-                    height={moderateScale(180)}
-                    borderRadius={10}
-                    style={{ marginTop: spacing.sm }}
-                />
-            </View>
+            {/* Chart skeleton */}
+            <S width="100%" height={moderateScale(200)} style={{ marginBottom: spacing.lg }} />
+            <S width="100%" height={moderateScale(200)} style={{ marginBottom: spacing.lg }} />
 
-            {/* Line chart card 2 — Jobs Posted Per Day */}
-            <View style={styles.chartCard}>
-                <View style={[styles.chartAccentBar, skeletonStyles.accentBarPlaceholder]} />
-                <View style={skeletonStyles.chartTitleRow}>
-                    <S width={moderateScale(150)} height={moderateScale(14)} borderRadius={4} />
-                    <S width={moderateScale(60)} height={moderateScale(12)} borderRadius={3} />
-                </View>
-                <S
-                    width={'100%'}
-                    height={moderateScale(180)}
-                    borderRadius={10}
-                    style={{ marginTop: spacing.sm }}
-                />
-            </View>
+            {/* Job breakdown skeleton */}
+            {/* {[1, 2, 3, 4].map(i => (
+                <S key={i} width="100%" height={moderateScale(70)} style={{ marginBottom: spacing.sm }} />
+            ))} */}
         </ScrollView>
     )
 }
 
-const skeletonStyles = StyleSheet.create({
-    accentBarPlaceholder: {
-        backgroundColor: '#E8E8E8',
-    },
-    pieRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingHorizontal: spacing.xs,
-    },
-    legendCol: {
-        flex: 1,
-        marginLeft: spacing.lg,
-        gap: spacing.md,
-    },
-    legendRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    chartTitleRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'baseline',
-        marginBottom: spacing.md,
-    },
-})
-
-// ─── Stat Card ────────────────────────────────────────────────────────────────
-const StatCard: React.FC<{
-    label: string
-    value: string | number
-    color: string
-    delay?: number
-}> = ({ label, value, color, delay = 0 }) => {
-    const anim = useRef(new Animated.Value(0)).current
-    useEffect(() => {
-        Animated.timing(anim, { toValue: 1, duration: 500, delay, useNativeDriver: true }).start()
-    }, [anim, delay])
+const StatCard = ({ icon, label, value, bg }: { icon: React.ReactNode; label: string; value: any; bg: string }) => {
     return (
-        <Animated.View style={[
-            styles.statCard,
-            {
-                opacity: anim,
-                transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }],
-            },
-        ]}>
-            <View style={[styles.statDot, { backgroundColor: color }]} />
-            <Text style={[styles.statValue, { color }]}>{value}</Text>
-            <Text style={styles.statLabel}>{label}</Text>
-        </Animated.View>
+        <View
+            style={{
+                flex: 1,
+                backgroundColor: bg,
+                borderRadius: spacing.sm,
+                padding: spacing.sm,
+                alignItems: 'center',
+                gap: spacing.xs,
+            }}
+        >
+            {icon}
+            <Text style={{ fontSize: moderateScale(18), fontWeight: '800', color: colors.primaryTextColor }}>
+                {value}
+            </Text>
+            <Text style={{ fontSize: moderateScale(9), fontWeight: '600', color: colors.secondaryTextColor, textAlign: 'center' }}>
+                {label}
+            </Text>
+        </View>
     )
 }
 
-// ─── Section Header ───────────────────────────────────────────────────────────
-const SectionHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
-    <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
-        {subtitle ? <Text style={styles.sectionSubtitle}>{subtitle}</Text> : null}
-    </View>
-)
+// ─── Mini status bar for job breakdown ───
+const StatusBar = ({ accepted, rejected, pending, total }: any) => {
+    if (total === 0) return null
+    return (
+        <View style={{ flexDirection: 'row', height: moderateScale(6), borderRadius: 3, overflow: 'hidden', marginTop: spacing.xs }}>
+            {accepted > 0 && <View style={{ flex: accepted / total, backgroundColor: '#059669' }} />}
+            {pending > 0 && <View style={{ flex: pending / total, backgroundColor: '#D97706' }} />}
+            {rejected > 0 && <View style={{ flex: rejected / total, backgroundColor: '#DC2626' }} />}
+        </View>
+    )
+}
 
-// ─── Chart Card ───────────────────────────────────────────────────────────────
-const ChartCard: React.FC<{
-    title: string
-    subtitle?: string
-    accentColor: string
-    children: React.ReactNode
-}> = ({ title, subtitle, accentColor, children }) => (
-    <View style={styles.chartCard}>
-        <View style={[styles.chartAccentBar, { backgroundColor: accentColor }]} />
-        <SectionHeader title={title} subtitle={subtitle} />
-        {children}
-    </View>
-)
-
-// ─── Main Component ───────────────────────────────────────────────────────────
-const StudentHome: React.FC = () => {
-    const { data, isLoading, isError, refetch } = useQuery({
-        queryKey: ['studentDashboard'],
+// ─── Main Dashboard ───
+const RecruiterDashboard = () => {
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['dashboard'],
         queryFn: studentApi.getStudentDashboardData,
     })
 
-    const headerAnim = useRef(new Animated.Value(0)).current
-    useEffect(() => {
-        if (!isLoading) {
-            Animated.timing(headerAnim, { toValue: 1, duration: 600, useNativeDriver: true }).start()
-        }
-    }, [isLoading, headerAnim])
-
-    // ── Loading ────────────────────────────────────────────────────────────────
-    if (isLoading) {
-        return (
-            <SafeScreen>
-                <Header />
-                <DashboardSkeleton />
-            </SafeScreen>
-        )
+    if (error) {
+        return <ErrorScreen message={error.message} onRetry={refetch} />
     }
 
-    // ── Error ──────────────────────────────────────────────────────────────────
-    if (isError) {
-        return (
-            <SafeScreen>
-                <View style={styles.centered}>
-                    <Text style={styles.errorIcon}>⚠️</Text>
-                    <Text style={styles.errorTitle}>Something went wrong</Text>
-                    <Text style={styles.errorSub}>Could not load your dashboard.</Text>
-                    <Text style={styles.retryBtn} onPress={() => refetch()}>Try again</Text>
-                </View>
-            </SafeScreen>
-        )
-    }
+    const summary = data?.summary
+    const jobBreakdown = data?.jobBreakdown || []
+    const graphs = data?.graphs
 
-    // ── Data Prep ──────────────────────────────────────────────────────────────
-    const summary = data?.summary ?? {
-        totalApplications: 0, pending: 0, viewed: 0, accepted: 0, rejected: 0,
-    }
-
-    const successRate = summary.totalApplications > 0
-        ? ((summary.accepted / summary.totalApplications) * 100).toFixed(1)
+    const successRate = (summary?.totalApplications ?? 0) > 0
+        ? (((summary?.accepted ?? 0) / (summary?.totalApplications ?? 1)) * 100).toFixed(1)
         : '0.0'
+    // Prepare chart data for "Jobs Posted" (last 7 days)
+    const jobsPerDay = (graphs?.jobsPostedPerDay || []).slice(0, 7).reverse()
+    const jobChartLabels = jobsPerDay.map((d: any) => {
+        const date = new Date(d.date)
+        return `${date.getDate()}/${date.getMonth() + 1}`
+    })
+    const jobChartValues = jobsPerDay.map((d: any) => d.jobs)
 
-    const applicationsPerDay: any[] = [...(data?.graphs?.applicationsPerDay ?? [])].slice(0, 7).reverse()
-    const jobsPostedPerDay: any[] = [...(data?.graphs?.jobsPostedPerDay ?? [])].slice(0, 7).reverse()
-
-    const appLabels = applicationsPerDay.length > 0 ? applicationsPerDay.map(d => formatDayLabel(d.date)) : ['--']
-    const appValues = safeChartData(applicationsPerDay.map(d => d.applications))
-
-    const jobLabels = jobsPostedPerDay.length > 0 ? jobsPostedPerDay.map(d => formatDayLabel(d.date)) : ['--']
-    const jobValues = safeChartData(jobsPostedPerDay.map(d => d.jobs))
-
-    const applicationChartData = {
-        labels: appLabels,
-        datasets: [{ data: appValues, color: (opacity = 1) => `rgba(59,130,246,${opacity})`, strokeWidth: 2 }],
-    }
-
-    const jobsChartData = {
-        labels: jobLabels,
-        datasets: [{ data: jobValues, color: (opacity = 1) => `rgba(249,115,22,${opacity})`, strokeWidth: 2 }],
-    }
-
-    const statusPieData = [
-        { name: 'Accepted', population: summary.accepted, color: COLOR.accepted, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-        { name: 'Pending', population: summary.pending, color: COLOR.pending, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-        { name: 'Viewed', population: summary.viewed, color: COLOR.viewed, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-        { name: 'Rejected', population: summary.rejected, color: COLOR.rejected, legendFontColor: COLOR.textSecondary, legendFontSize: 12 },
-    ].filter(d => d.population > 0)
-
-    const BASE_LINE_CONFIG = {
+    const chartConfig = {
+        backgroundColor: '#fff',
+        backgroundGradientFrom: '#fff',
+        backgroundGradientTo: '#fff',
         decimalPlaces: 0,
-        backgroundColor: COLOR.surface,
-        backgroundGradientFrom: COLOR.surface,
-        backgroundGradientTo: COLOR.surface,
-        labelColor: (opacity = 1) => `rgba(107,114,128,${opacity})`,
-        propsForBackgroundLines: { stroke: '#F1F2F7', strokeDasharray: '' },
+        color: (opacity = 1) => `rgba(108, 99, 255, ${opacity})`,
+        labelColor: () => colors.secondaryTextColor,
+        propsForDots: {
+            r: '4',
+            strokeWidth: '2',
+            stroke: colors.primaryColor,
+        },
+        propsForBackgroundLines: {
+            strokeDasharray: '',
+            stroke: '#f0f0f0',
+        },
     }
 
-    // ── Render ─────────────────────────────────────────────────────────────────
+
+    const applicationsPerDay = (graphs?.applicationsPerDay || []).slice(0, 7).reverse()
+    const applicationsChartLabels = applicationsPerDay.map((d: any) => {
+        const date = new Date(d.date)
+        return `${date.getDate()}/${date.getMonth() + 1}`
+    })
+    const applicationsChartValues = applicationsPerDay.map((d: any) => d.applications)
+
+    const studentsChartConfig = {
+        backgroundColor: '#fff',
+        backgroundGradientFrom: '#fff',
+        backgroundGradientTo: '#fff',
+        decimalPlaces: 0,
+        color: (opacity = 1) => `rgba(108, 99, 255, ${opacity})`,
+        labelColor: () => colors.secondaryTextColor,
+        propsForDots: {
+            r: '4',
+            strokeWidth: '2',
+            stroke: colors.primaryColor,
+        },
+        propsForBackgroundLines: {
+            strokeDasharray: '',
+            stroke: '#f0f0f0',
+        },
+    }
+
     return (
         <SafeScreen>
             <Header />
-            <ScrollView
-                contentContainerStyle={styles.listContent}
-                showsVerticalScrollIndicator={false}
-            >
-                <View style={styles.headerWrapper}>
-                    <Animated.View style={{
-                        opacity: headerAnim,
-                        transform: [{ translateY: headerAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
-                    }}>
-                        <Text style={styles.pageTitle}>Dashboard</Text>
-                        <Text style={styles.pageSubtitle}>Your application overview</Text>
-                    </Animated.View>
+            {isLoading ? (
+                <DashboardSkeleton />
+            ) : (
+                <ScrollView
+                    style={{ flex: 1 }}
+                    contentContainerStyle={{
+                        padding: spacing.md
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl refreshing={false} onRefresh={refetch} tintColor={colors.primaryColor} />
+                    }
+                >
+                    <Text style={{ ...typography.h2, marginBottom: spacing.md }}>Dashboard</Text>
 
-                    <View style={styles.statsSection}>
-                        <SectionHeader title="Summary" />
-                        <View style={styles.statsGrid}>
-                            <StatCard label="Total" value={summary.totalApplications} color={COLOR.accent} delay={0} />
-                            <StatCard label="Pending" value={summary.pending} color={COLOR.pending} delay={60} />
-                            <StatCard label="Accepted" value={summary.accepted} color={COLOR.accepted} delay={120} />
-                            <StatCard label="Viewed" value={summary.viewed} color={COLOR.viewed} delay={180} />
-                            <StatCard label="Rejected" value={summary.rejected} color={COLOR.rejected} delay={240} />
-                            <StatCard label="Success" value={`${successRate}%`} color={COLOR.success} delay={300} />
-                        </View>
+                    {/* ── Summary Cards ── */}
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg }}>
+                        <StatCard
+                            icon={<CheckCircle size={moderateScale(20)} color="#059669" />}
+                            label="Accepted"
+                            value={summary?.accepted ?? 0}
+                            bg="#D1FAE5"
+                        />
+                        <StatCard
+                            icon={<Clock size={moderateScale(20)} color="#D97706" />}
+                            label="Pending"
+                            value={summary?.pending ?? 0}
+                            bg="#FEF3C7"
+                        />
+                        <StatCard
+                            icon={<XCircle size={moderateScale(20)} color="#DC2626" />}
+                            label="Rejected"
+                            value={summary?.rejected ?? 0}
+                            bg="#FEE2E2"
+                        />
                     </View>
 
-                    {statusPieData.length > 0 && (
-                        <ChartCard title="Status Distribution" accentColor={COLOR.accent}>
-                            <PieChart
-                                data={statusPieData}
-                                width={CHART_WIDTH}
-                                height={200}
-                                chartConfig={{ color: (opacity = 1) => `rgba(0,0,0,${opacity})` }}
-                                accessor="population"
-                                backgroundColor="transparent"
-                                paddingLeft="12"
-                                absolute
-                                style={styles.chart}
-                            />
-                        </ChartCard>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.sm }}>
+                        <StatCard
+                            icon={<Eye size={moderateScale(20)} color="#6C63FF" />}
+                            label="Viewed"
+                            value={summary?.viewed ?? 0}
+                            bg="#EDE9FE"
+                        />
+                        <StatCard
+                            icon={<Building size={moderateScale(20)} color="#0891B2" />}
+                            label="Total Applications"
+                            value={summary?.totalApplications ?? 0}
+                            bg="#CFFAFE"
+                        />
+                        <StatCard
+                            icon={<TrendingUp size={moderateScale(20)} color="#7C3AED" />}
+                            label="Success Rate"
+                            value={`${successRate}%`}
+                            bg="#F3E8FF"
+                        />
+                    </View>
+
+
+                    {/* ── Jobs Posted Chart ── */}
+                    {jobChartLabels.length > 0 && (
+                        <View style={{ marginBottom: spacing.lg }}>
+                            <Text style={{ ...typography.h4, marginBottom: spacing.sm }}>Jobs Posted (Last 7 Days)</Text>
+                            <View
+                                style={{
+                                    borderRadius: spacing.sm,
+                                    overflow: 'hidden',
+                                    borderWidth: 1,
+                                    borderColor: colors.disabledColor,
+                                }}
+                            >
+                                <LineChart
+                                    data={{
+                                        labels: jobChartLabels,
+                                        datasets: [{ data: jobChartValues.length > 0 ? jobChartValues : [0] }],
+                                    }}
+                                    width={SCREEN_WIDTH - spacing.md * 2 - 2}
+                                    height={moderateScale(200)}
+                                    chartConfig={chartConfig}
+                                    bezier
+                                    style={{ borderRadius: spacing.sm }}
+                                    fromZero
+                                />
+                            </View>
+                        </View>
                     )}
 
-                    <ChartCard title="Applications Per Day" subtitle="Last 7 days" accentColor={COLOR.accent}>
-                        <LineChart
-                            data={applicationChartData}
-                            width={CHART_WIDTH}
-                            height={200}
-                            chartConfig={{
-                                ...BASE_LINE_CONFIG,
-                                color: (opacity = 1) => `rgba(59,130,246,${opacity})`,
-                                propsForDots: { r: '4', strokeWidth: '2', stroke: COLOR.accent },
-                            }}
-                            bezier
-                            withInnerLines
-                            withOuterLines={false}
-                            withShadow={false}
-                            formatYLabel={(val) => {
-                                const n = parseFloat(val)
-                                return n < 0.01 ? '0' : String(Math.round(n))
-                            }}
-                            style={styles.chart}
-                        />
-                    </ChartCard>
+                    {/* ── Students Registered Chart ── */}
+                    {applicationsChartLabels.length > 0 && (
+                        <View style={{ marginBottom: spacing.lg }}>
+                            <Text style={{ ...typography.h4, marginBottom: spacing.sm }}>Applications (Last 7 Days)</Text>
+                            <View
+                                style={{
+                                    borderRadius: spacing.sm,
+                                    overflow: 'hidden',
+                                    borderWidth: 1,
+                                    borderColor: colors.disabledColor,
+                                }}
+                            >
+                                <LineChart
+                                    data={{
+                                        labels: applicationsChartLabels,
+                                        datasets: [{ data: applicationsChartValues.length > 0 ? applicationsChartValues : [0] }],
+                                    }}
+                                    width={SCREEN_WIDTH - spacing.md * 2 - 2}
+                                    height={moderateScale(200)}
+                                    chartConfig={studentsChartConfig}
+                                    bezier
+                                    style={{ borderRadius: spacing.sm }}
+                                    fromZero
+                                />
+                            </View>
+                        </View>
+                    )}
 
-                    <ChartCard title="Jobs Posted Per Day" subtitle="Last 7 days" accentColor={COLOR.jobs}>
-                        <LineChart
-                            data={jobsChartData}
-                            width={CHART_WIDTH}
-                            height={200}
-                            chartConfig={{
-                                ...BASE_LINE_CONFIG,
-                                color: (opacity = 1) => `rgba(249,115,22,${opacity})`,
-                                propsForDots: { r: '4', strokeWidth: '2', stroke: COLOR.jobs },
+                    {/* ── Job Breakdown ── */}
+                    {/* <Text style={{ ...typography.h4, marginBottom: spacing.sm }}>Job Breakdown</Text> */}
+                    {/* {jobBreakdown.map((job: any) => (
+                        <View
+                            key={job.jobId}
+                            style={{
+                                borderWidth: 1,
+                                borderColor: colors.disabledColor,
+                                borderRadius: spacing.sm,
+                                padding: spacing.md,
+                                marginBottom: spacing.sm,
                             }}
-                            bezier
-                            withInnerLines
-                            withOuterLines={false}
-                            withShadow={false}
-                            formatYLabel={(val) => {
-                                const n = parseFloat(val)
-                                return n < 0.01 ? '0' : String(Math.round(n))
-                            }}
-                            style={styles.chart}
-                        />
-                    </ChartCard>
-                </View>
-            </ScrollView>
+                        >
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Text className="capitalize" style={{ ...typography.h4, flex: 1, marginRight: spacing.sm }}>
+                                    {job.jobTitle}
+                                </Text>
+                                <View
+                                    style={{
+                                        backgroundColor: '#EDE9FE',
+                                        paddingHorizontal: spacing.sm,
+                                        paddingVertical: spacing.xs,
+                                        borderRadius: spacing.xs,
+                                    }}
+                                >
+                                    <Text style={{ fontSize: moderateScale(10), fontWeight: '700', color: '#6C63FF' }}>
+                                        {job.totalApplicants} applicant{job.totalApplicants !== 1 ? 's' : ''}
+                                    </Text>
+                                </View>
+                            </View>
+                            <StatusBar
+                                accepted={job.accepted}
+                                rejected={job.rejected}
+                                pending={job.pending}
+                                total={job.totalApplicants}
+                            />
+                            <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.sm }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                                    <CheckCircle size={moderateScale(10)} color="#059669" />
+                                    <Text style={{ fontSize: moderateScale(10), color: '#059669', fontWeight: '600' }}>
+                                        {job.accepted}
+                                    </Text>
+                                </View>
+
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                                    <Clock size={moderateScale(10)} color="#D97706" />
+                                    <Text style={{ fontSize: moderateScale(10), color: '#D97706', fontWeight: '600' }}>
+                                        {job.pending}
+                                    </Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
+                                    <XCircle size={moderateScale(10)} color="#DC2626" />
+                                    <Text style={{ fontSize: moderateScale(10), color: '#DC2626', fontWeight: '600' }}>
+                                        {job.rejected}
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+                    ))} */}
+                </ScrollView>
+            )}
         </SafeScreen>
     )
 }
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-const styles = StyleSheet.create({
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: spacing.md },
-    errorIcon: { fontSize: headingSize.h1, marginBottom: spacing.sm },
-    errorTitle: { fontSize: headingSize.h2, fontWeight: '700', color: COLOR.textPrimary },
-    errorSub: { fontSize: fontSize.md, color: COLOR.textSecondary },
-    retryBtn: { marginTop: spacing.md, fontSize: fontSize.md, fontWeight: '600', color: COLOR.accent, textDecorationLine: 'underline' },
-
-    listContent: { backgroundColor: COLOR.bg, paddingBottom: spacing.xl },
-    headerWrapper: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.sm },
-
-    pageTitle: { fontSize: headingSize.h1, fontWeight: '800', color: COLOR.textPrimary, letterSpacing: -0.5 },
-    pageSubtitle: { fontSize: fontSize.md, color: COLOR.textMuted, marginTop: spacing.xs, marginBottom: spacing.lg },
-
-    statsSection: { marginBottom: spacing.lg },
-    statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-    statCard: {
-        backgroundColor: COLOR.surface,
-        borderRadius: moderateScale(14),
-        padding: spacing.md,
-        alignItems: 'flex-start',
-        borderWidth: 1,
-        borderColor: COLOR.border,
-        shadowColor: '#000',
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: 2,
-    },
-    statDot: { width: 8, height: 8, borderRadius: 4, marginBottom: spacing.xs },
-    statValue: { fontSize: headingSize.h2, fontWeight: '800', letterSpacing: -0.5 },
-    statLabel: { fontSize: fontSize.xs, color: COLOR.textMuted, marginTop: spacing.xs, fontWeight: '500' },
-
-    chartCard: {
-        backgroundColor: COLOR.surface,
-        borderRadius: moderateScale(16),
-        padding: spacing.md,
-        marginBottom: spacing.md,
-        borderWidth: 1,
-        borderColor: COLOR.border,
-        shadowColor: '#000',
-        shadowOpacity: 0.04,
-        shadowRadius: 8,
-        shadowOffset: { width: 0, height: 2 },
-        elevation: 2,
-        overflow: 'hidden',
-    },
-    chartAccentBar: {
-        position: 'absolute', top: 0, left: 0, right: 0, height: 3,
-        borderTopLeftRadius: moderateScale(16), borderTopRightRadius: moderateScale(16),
-    },
-    chart: { borderRadius: 10, marginTop: spacing.sm },
-
-    sectionHeader: {
-        flexDirection: 'row', justifyContent: 'space-between',
-        alignItems: 'baseline', marginBottom: spacing.md,
-    },
-    sectionTitle: { fontSize: headingSize.h3, fontWeight: '700', color: COLOR.textPrimary, letterSpacing: -0.2 },
-    sectionSubtitle: { fontSize: fontSize.sm, color: COLOR.textMuted, fontWeight: '500' },
-})
-
-export default StudentHome
+export default RecruiterDashboard

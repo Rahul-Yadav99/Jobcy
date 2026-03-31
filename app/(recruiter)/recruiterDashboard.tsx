@@ -297,9 +297,9 @@ const RecruiterDashboard = () => {
 
                     {/* ── Job Breakdown ── */}
                     <Text style={{ ...typography.h4, marginBottom: spacing.sm }}>Job Breakdown</Text>
-                    {jobBreakdown.map((job: any) => (
+                    {jobBreakdown.map((job: any, index: number) => (
                         <View
-                            key={job.jobId}
+                            key={job.jobId ?? `job-${index}`}
                             style={{
                                 borderWidth: 1,
                                 borderColor: colors.disabledColor,
