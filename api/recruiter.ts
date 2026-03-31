@@ -148,6 +148,17 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    getAllApplicants: async () => {
+        try {
+            const response = await axios.get(`${COMPANY_API_END_POINT}/students`, {
+                withCredentials: true
+            })
+            return response.data.students;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 

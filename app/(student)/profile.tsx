@@ -7,6 +7,7 @@ import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/contexts/AuthContext';
 import { profileService } from '@/services/profileService';
 import { primaryTextColor, secondaryTextColor } from '@/utils/theme';
+import { typography } from '@/utils/typography';
 import * as DocumentPicker from 'expo-document-picker';
 import * as WebBrowser from 'expo-web-browser';
 import { Briefcase, GraduationCap, LogOut, Mail, Phone } from 'lucide-react-native';
@@ -162,11 +163,11 @@ const Profile = () => {
                         <View className='border border-neutral-200 rounded-lg' style={{ marginTop: moderateScale(8), padding: moderateScale(8), gap: moderateScale(8) }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: moderateScale(8) }}>
                                 <Mail size={20} color={primaryTextColor} />
-                                <Text style={{ color: secondaryTextColor }}>{user?.email || "No email available"}</Text>
+                                <Text style={typography.h5}>{user?.email || "No email available"}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: moderateScale(8) }}>
                                 <Phone size={20} color={primaryTextColor} />
-                                <Text style={{ color: secondaryTextColor }}>{user?.phoneNumber || "No phone number available"}</Text>
+                                <Text style={typography.h5}>{user?.phoneNumber || "No phone number available"}</Text>
                             </View>
                         </View>
                     </View>
@@ -182,11 +183,11 @@ const Profile = () => {
                         <View className='border border-neutral-200 rounded-lg' style={{ marginTop: moderateScale(8), padding: moderateScale(8), gap: moderateScale(8) }}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: moderateScale(8) }}>
                                 <Briefcase size={20} color={primaryTextColor} />
-                                <Text style={{ color: secondaryTextColor }}>{user?.profile?.currentCompany || "Company not available"}</Text>
+                                <Text style={typography.h5}>{user?.profile?.currentCompany || "Company not available"}</Text>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: moderateScale(8) }}>
                                 <GraduationCap size={20} color={primaryTextColor} />
-                                <Text style={{ color: secondaryTextColor }}>{user?.profile?.college || "College not available"}</Text>
+                                <Text style={typography.h5}>{user?.profile?.college || "College not available"}</Text>
                             </View>
                         </View>
                     </View>

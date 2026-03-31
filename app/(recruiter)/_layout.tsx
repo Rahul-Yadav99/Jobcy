@@ -1,6 +1,6 @@
 import { colors, primaryColor } from '@/utils/theme'
 import { Tabs } from 'expo-router'
-import { Building, LayoutDashboard, Newspaper } from 'lucide-react-native'
+import { Bot, Building, LayoutDashboard, Newspaper, SparkleIcon, Sparkles } from 'lucide-react-native'
 import React from 'react'
 import { Image } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
@@ -37,6 +37,15 @@ const RecruiterLayout = () => {
                     title: 'Dashboard',
                     tabBarIcon: ({ color }) => (
                         <LayoutDashboard size={moderateScale(20)} color={color} />
+                    )
+                }}
+            />
+            <Tabs.Screen
+                name='ai'
+                options={{
+                    title: 'AI',
+                    tabBarIcon: ({ color }) => (
+                        <Sparkles size={moderateScale(20)} color={color} />
                     )
                 }}
             />

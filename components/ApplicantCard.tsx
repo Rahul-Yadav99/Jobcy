@@ -18,7 +18,7 @@ const statusColors: Record<string, { bg: string; text: string }> = {
 
 const statusOptions = ['pending', 'accepted', 'rejected'] as const
 
-const ApplicantCard = ({ item }: { item: any }) => {
+const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean }) => {
     const applicant = item?.applicant
     const status = item?.status?.toLowerCase() || 'pending'
     const color = statusColors[status] || statusColors.pending
@@ -53,7 +53,6 @@ const ApplicantCard = ({ item }: { item: any }) => {
             Alert.alert('Error', 'Unable to open resume.')
         }
     }
-
     return (
         <View
             style={{
@@ -140,7 +139,9 @@ const ApplicantCard = ({ item }: { item: any }) => {
                 }}
             >
                 <Mail size={moderateScale(14)} color={colors.secondaryTextColor} />
-                <Text style={typography.body}>{applicant?.email}</Text>
+                <Text style={typography.body}>
+                    {isApplicant ? item?.item?.email : applicant?.email}
+                </Text>
             </View>
 
             {/* Phone */}
