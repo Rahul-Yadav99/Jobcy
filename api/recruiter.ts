@@ -159,6 +159,20 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    sendMessage: async (payload: any) => {
+        try {
+            const response = await axios.post(`${BASE_API_END_POINT}/send-to-student`, payload, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data.message;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 

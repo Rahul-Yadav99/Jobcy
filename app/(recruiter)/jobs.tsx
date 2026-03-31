@@ -156,7 +156,7 @@ const Jobs = () => {
                     behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 >
                     <ScrollView
-                        style={{ flex: 1, padding: spacing.md }}
+                        style={{ flex: 1, padding: spacing.md, }}
                         contentContainerStyle={{ flexGrow: 1 }}
                         keyboardShouldPersistTaps="handled"
                         showsVerticalScrollIndicator={false}

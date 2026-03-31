@@ -6,8 +6,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as WebBrowser from 'expo-web-browser'
 import { Calendar, ChevronDown, FileText, Mail, Phone, Send } from 'lucide-react-native'
 import React, { useState } from 'react'
-import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
+import ModalCloseButton from './ModalCloseButton'
+import { Button, Input } from './ui'
 
 const statusColors: Record<string, { bg: string; text: string }> = {
     pending: { bg: '#FEF3C7', text: '#D97706' },
@@ -17,6 +19,7 @@ const statusColors: Record<string, { bg: string; text: string }> = {
 }
 
 const statusOptions = ['pending', 'accepted', 'rejected'] as const
+const messageOptions = ['message', 'interview_invite', 'application_update', 'general'] as const
 
 const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean }) => {
     const applicant = isApplicant ? item?.item : item?.applicant
@@ -25,6 +28,11 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
     const resumeUrl = applicant?.profile?.resume
     const queryClient = useQueryClient()
     const [dropdownOpen, setDropdownOpen] = useState(false)
+    const [messageDropdownOpen, setMessageDropdownOpen] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [message, setMessage] = useState('')
+    const [type, setType] = useState('message')
+    const [studentId, setStudentId] = useState('')
 
     const { mutate: updateStatus, isPending: isUpdating } = useMutation({
         mutationFn: (newStatus: string) => recruiterApi.updateApplicationStatus(item._id, newStatus),
@@ -38,6 +46,45 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
             Alert.alert('Error', error || 'Failed to update application status. Please try again.');
         }
     })
+
+    const { mutate: sendMessage, isPending: isSending } = useMutation({
+        mutationFn: (data: { studentId: string, message: string, type: string }) => recruiterApi.sendMessage(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['applications']
+            })
+            setVisible(false)
+            setMessage('')
+            setType('message')
+            setStudentId('')
+        },
+        onError: (error: string) => {
+            Alert.alert('Error', error || 'Failed to send message. Please try again.');
+        }
+    })
+
+    // Helper to reset modal state
+    const resetMessageModal = () => {
+        setVisible(false)
+        setMessage('')
+        setType('message')
+        setMessageDropdownOpen(false)
+        setStudentId('')
+    }
+
+    const handleSendMessage = () => {
+        if (!message.trim()) {
+            Alert.alert('Error', 'Please enter a message before sending.')
+            return
+        }
+
+        if (!studentId) {
+            Alert.alert('Error', 'Student ID is missing.')
+            return
+        }
+
+        sendMessage({ studentId, message: message.trim(), type })
+    }
 
     const updateResumeStatus = async () => {
         if (!resumeUrl) {
@@ -223,6 +270,7 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                     </TouchableOpacity>
 
                     <TouchableOpacity
+                        onPress={() => { setVisible(true); setStudentId(applicant?._id) }}
                         style={{
                             backgroundColor: colors.backgroundGray,
                             borderRadius: spacing.xs,
@@ -337,6 +385,132 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                     )}
                 </View>
             )}
+
+            {/* Message modal */}
+
+            <Modal
+                visible={visible}
+                animationType="slide"
+                onRequestClose={resetMessageModal}
+            >
+                <KeyboardAvoidingView
+                    style={{
+                        flex: 1,
+                    }}
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                >
+                    <ScrollView
+                        style={{ flex: 1, padding: spacing.md }}
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        keyboardShouldPersistTaps="handled"
+                        showsVerticalScrollIndicator={false}
+                    >
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginBottom: spacing.md,
+                            }}
+                        >
+                            <Text style={typography.h3}>Send Message</Text>
+                            <ModalCloseButton onPress={resetMessageModal} />
+                        </View>
+                        <View>
+                            <Text style={{ ...typography.h5, textTransform: 'capitalize', marginBottom: spacing.sm, color: colors.primaryTextColor, fontWeight: '600', }}>To : {applicant?.fullname ?? 'Applicant'}</Text>
+                            <Input
+                                label='Message'
+                                placeholder="Message"
+                                value={message}
+                                onChangeText={setMessage}
+                                multiline
+                                numberOfLines={140}
+                                required
+                            />
+                        </View>
+                        <Text style={{ ...typography.h5, textTransform: 'capitalize', marginBottom: spacing.sm, marginTop: spacing.sm, color: colors.primaryTextColor, fontWeight: '600', }}>Select Message Type</Text>
+                        <View>
+                            <TouchableOpacity
+                                onPress={() => setMessageDropdownOpen(!messageDropdownOpen)}
+                                activeOpacity={0.7}
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    borderWidth: 1,
+                                    borderColor: colors.disabledColor,
+                                    borderRadius: moderateScale(8),
+                                    paddingVertical: moderateScale(12),
+                                    paddingHorizontal: moderateScale(12),
+                                }}
+                            >
+                                <Text
+                                    style={{
+                                        fontSize: moderateScale(14),
+                                        fontWeight: '400',
+                                        color: colors.placeholderColor,
+                                        textTransform: 'capitalize',
+                                    }}
+                                >
+                                    {type}
+                                </Text>
+
+                                <ChevronDown
+                                    size={moderateScale(16)}
+                                    color={colors.secondaryTextColor}
+                                    style={{
+                                        transform: [{ rotate: messageDropdownOpen ? '180deg' : '0deg' }],
+                                    }}
+                                />
+                            </TouchableOpacity>
+
+                            {messageDropdownOpen && (
+                                <View
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: colors.disabledColor,
+                                        borderRadius: spacing.xs,
+                                        marginTop: spacing.xs,
+                                        overflow: 'hidden',
+                                    }}
+                                >
+                                    {messageOptions.map((option) => {
+                                        const isActive = type === option
+
+                                        return (
+                                            <TouchableOpacity
+                                                key={option}
+                                                onPress={() => {
+                                                    setType(option) // ✅ select value
+                                                    setMessageDropdownOpen(false) // ✅ close dropdown
+                                                }}
+                                                activeOpacity={0.7}
+                                                style={{
+                                                    paddingVertical: spacing.sm,
+                                                    paddingHorizontal: spacing.sm,
+                                                    backgroundColor: isActive ? '#eee' : '#fff',
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: moderateScale(12),
+                                                        fontWeight: isActive ? '700' : '500',
+                                                        color: colors.primaryTextColor,
+                                                        textTransform: 'capitalize',
+                                                    }}
+                                                >
+                                                    {option}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })}
+                                </View>
+                            )}
+                        </View>
+                        <Button title='Send Message' onPress={handleSendMessage} loading={isSending} disabled={isSending || !message.trim()} size='medium' style={{ marginTop: spacing.md }} />
+                    </ScrollView>
+                </KeyboardAvoidingView>
+            </Modal>
         </View>
     )
 }
