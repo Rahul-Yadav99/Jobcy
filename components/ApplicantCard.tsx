@@ -4,7 +4,7 @@ import { colors, spacing } from '@/utils/theme'
 import { typography } from '@/utils/typography'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import * as WebBrowser from 'expo-web-browser'
-import { Calendar, ChevronDown, FileText, Mail, Phone } from 'lucide-react-native'
+import { Calendar, ChevronDown, FileText, Mail, Phone, Send } from 'lucide-react-native'
 import React, { useState } from 'react'
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
@@ -19,7 +19,7 @@ const statusColors: Record<string, { bg: string; text: string }> = {
 const statusOptions = ['pending', 'accepted', 'rejected'] as const
 
 const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean }) => {
-    const applicant = item?.applicant
+    const applicant = isApplicant ? item?.item : item?.applicant
     const status = item?.status?.toLowerCase() || 'pending'
     const color = statusColors[status] || statusColors.pending
     const resumeUrl = applicant?.profile?.resume
@@ -39,7 +39,7 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
         }
     })
 
-    const openResume = async () => {
+    const updateResumeStatus = async () => {
         if (!resumeUrl) {
             Alert.alert('No Resume', 'Resume not available for this applicant.')
             return
@@ -48,6 +48,18 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
             if (status !== 'viewed' && status !== 'accepted') {
                 updateStatus('viewed');
             }
+            await WebBrowser.openBrowserAsync(resumeUrl)
+        } catch {
+            Alert.alert('Error', 'Unable to open resume.')
+        }
+    }
+
+    const openResume = async () => {
+        if (!resumeUrl) {
+            Alert.alert('No Resume', 'Resume not available for this applicant.')
+            return
+        }
+        try {
             await WebBrowser.openBrowserAsync(resumeUrl)
         } catch {
             Alert.alert('Error', 'Unable to open resume.')
@@ -97,18 +109,18 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                                 fontSize: moderateScale(16),
                             }}
                         >
-                            {applicant?.fullname?.charAt(0)?.toUpperCase()}
+                            {applicant?.fullname?.charAt(0)?.toUpperCase() ?? 'S'}
                         </Text>
                     </View>
                     <View>
                         <Text className="capitalize" style={typography.h4}>
-                            {applicant?.fullname}
+                            {applicant?.fullname ?? 'Student'}
                         </Text>
-                        <Text style={typography.body}>{applicant?.role}</Text>
+                        <Text style={typography.body}>{applicant?.role ?? 'Student'}</Text>
                     </View>
                 </View>
                 {/* Status Badge */}
-                <View
+                {!isApplicant && (<View
                     style={{
                         backgroundColor: color.bg,
                         paddingHorizontal: spacing.sm,
@@ -126,7 +138,8 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                     >
                         {isUpdating ? 'Updating...' : status}
                     </Text>
-                </View>
+                </View>)}
+
             </View>
 
             {/* Email */}
@@ -139,8 +152,8 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                 }}
             >
                 <Mail size={moderateScale(14)} color={colors.secondaryTextColor} />
-                <Text style={typography.body}>
-                    {isApplicant ? item?.item?.email : applicant?.email}
+                <Text selectable style={typography.body}>
+                    {applicant?.email ?? 'student@gmail.com'}
                 </Text>
             </View>
 
@@ -154,7 +167,7 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                 }}
             >
                 <Phone size={moderateScale(14)} color={colors.secondaryTextColor} />
-                <Text style={typography.body}>{applicant?.phoneNumber}</Text>
+                <Text selectable style={typography.body}>{applicant?.phoneNumber ?? '1234567890'}</Text>
             </View>
 
             {/* Applied Date */}
@@ -168,42 +181,65 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
             >
                 <Calendar size={moderateScale(14)} color={colors.secondaryTextColor} />
                 <Text style={typography.body}>
-                    Applied on {formatDate(item?.createdAt)}
+                    Applied on {formatDate(item?.createdAt) ?? '2022-01-01'}
                 </Text>
             </View>
 
             {/* Resume */}
             {applicant?.profile?.resume && (
-                <TouchableOpacity
-                    onPress={openResume}
-                    activeOpacity={0.7}
+                <View
                     style={{
                         flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: spacing.xs,
-                        backgroundColor: colors.backgroundGray,
-                        paddingVertical: spacing.sm,
-                        paddingHorizontal: spacing.sm,
-                        borderRadius: spacing.xs,
-                        marginBottom: spacing.sm,
+                        gap: spacing.md,
                     }}
                 >
-                    <FileText size={moderateScale(14)} color={colors.primaryColor} />
-                    <Text
+                    <TouchableOpacity
+                        onPress={isApplicant ? openResume : updateResumeStatus}
+                        activeOpacity={0.7}
                         style={{
-                            fontSize: moderateScale(12),
-                            fontWeight: '600',
-                            color: colors.primaryColor,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: spacing.xs,
+                            backgroundColor: colors.backgroundGray,
+                            paddingHorizontal: spacing.sm,
+                            borderRadius: spacing.xs,
+                            marginBottom: spacing.sm,
+                            flex: 1,
+                            height: moderateScale(40), // ✅ FIX
                         }}
                     >
-                        View Resume
-                    </Text>
-                </TouchableOpacity>
+                        <FileText size={moderateScale(14)} color={colors.primaryColor} />
+                        <Text
+                            style={{
+                                fontSize: moderateScale(12),
+                                fontWeight: '600',
+                                color: colors.primaryColor,
+                            }}
+                        >
+                            View Resume
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: colors.backgroundGray,
+                            borderRadius: spacing.xs,
+                            marginBottom: spacing.sm,
+                            height: moderateScale(40),
+                            width: moderateScale(40),
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Send size={moderateScale(14)} color={colors.primaryColor} />
+                    </TouchableOpacity>
+                </View>
             )}
 
             {/* Status Dropdown — only show when resume is available */}
-            {resumeUrl && (
+            {!isApplicant && resumeUrl && (
                 <View>
                     <TouchableOpacity
                         onPress={() => setDropdownOpen(!dropdownOpen)}

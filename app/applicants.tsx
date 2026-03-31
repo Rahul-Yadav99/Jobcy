@@ -1,6 +1,8 @@
 import recruiterApi from '@/api/recruiter'
 import ApplicantCard from '@/components/ApplicantCard'
+import { ApplicantCardSkeletonList } from '@/components/ApplicantCardSkeleton'
 import BackButton from '@/components/BackButton'
+import Empty from '@/components/Empty'
 import SafeScreen from '@/components/SafeScreen'
 import { colors, headingSize, spacing } from '@/utils/theme'
 import { useQuery } from '@tanstack/react-query'
@@ -12,15 +14,20 @@ const Applicants = () => {
         queryKey: ['applicants'],
         queryFn: recruiterApi.getAllApplicants
     })
-    console.log("data", data);
     return (
         <SafeScreen>
             <View
                 style={{
                     padding: spacing.md,
+                    flex: 1,
                 }}
             >
-                <View className='flex-row items-center'>
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: spacing.md,
+                    gap: spacing.md,
+                }}>
                     <BackButton />
                     <Text
                         className='capitalize'
@@ -29,7 +36,6 @@ const Applicants = () => {
                             fontSize: headingSize.h2,
                             fontWeight: 'bold',
                             color: colors.primaryTextColor,
-                            marginLeft: spacing.md,
                         }}
                     >
                         Applicants
@@ -38,6 +44,17 @@ const Applicants = () => {
                 <FlatList
                     data={data || []}
                     renderItem={(item) => <ApplicantCard item={item} isApplicant={true} />}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        <>
+                            {isLoading && <ApplicantCardSkeletonList count={5} />}
+                        </>
+                    }
+                    ListEmptyComponent={
+                        !isLoading ? (
+                            <Empty message="No applicants yet" />
+                        ) : null
+                    }
                 />
             </View>
         </SafeScreen>

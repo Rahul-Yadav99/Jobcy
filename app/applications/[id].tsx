@@ -50,7 +50,7 @@ const Applications = () => {
                 <FlatList
                     data={isLoading ? [] : (data || [])}
                     keyExtractor={(item) => item._id}
-                    renderItem={({ item }) => <ApplicantCard item={item} />}
+                    renderItem={({ item }) => <ApplicantCard item={item} isApplicant={false} />}
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <>
