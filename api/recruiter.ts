@@ -173,6 +173,21 @@ const recruiterApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+
+    generateJobDescription: async (jobTitle: string) => {
+        try {
+            const response = await axios.post(`${BASE_API_END_POINT}/generate-job-desc`, { input: jobTitle }, {
+                withCredentials: true,
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+            return response.data
+        } catch (error: any) {
+            console.log(error);
+            throw error.response.data.error;
+        }
     }
 }
 

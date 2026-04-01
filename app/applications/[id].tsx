@@ -21,7 +21,7 @@ const Applications = () => {
     })
 
     if (error) {
-        return <ErrorScreen message={error.message} onRetry={refetch} />;
+        return <ErrorScreen message={error.message} onRetry={refetch} isDetailsScreen={true} />;
     }
 
     return (
@@ -54,7 +54,6 @@ const Applications = () => {
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <>
-
                             {isLoading && <ApplicantCardSkeletonList />}
                         </>
                     }

@@ -1,6 +1,7 @@
 import studentApi from '@/api/student';
 import BackButton from '@/components/BackButton';
 import Empty from '@/components/Empty';
+import ErrorScreen from '@/components/ErrorScreen';
 import JobDetailsSkeleton from '@/components/Jobdetailsskeleton';
 import SafeScreen from '@/components/SafeScreen';
 import { profileService } from '@/services/profileService';
@@ -64,10 +65,7 @@ const JobDetails = () => {
     // Error state
     if (error) {
         return (
-            <Empty
-                message="Something went wrong"
-                isDetailsScreen
-            />
+            <ErrorScreen message="Failed to load job details" onRetry={() => queryClient.invalidateQueries({ queryKey: ['job', jobId] })} isDetailsScreen />
         )
     }
 

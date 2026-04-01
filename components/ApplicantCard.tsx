@@ -227,9 +227,18 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                 }}
             >
                 <Calendar size={moderateScale(14)} color={colors.secondaryTextColor} />
-                <Text style={typography.body}>
-                    Applied on {formatDate(item?.createdAt) ?? '2022-01-01'}
-                </Text>
+                {
+                    isApplicant ? (
+                        <Text style={typography.body}>
+                            Joined on {formatDate(applicant?.createdAt) ?? '2022-01-01'}
+                        </Text>
+                    ) :
+                        (
+                            <Text style={typography.body}>
+                                Applied on {formatDate(item?.createdAt) ?? '2022-01-01'}
+                            </Text>
+                        )
+                }
             </View>
 
             {/* Resume */}

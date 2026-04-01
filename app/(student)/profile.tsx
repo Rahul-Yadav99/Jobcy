@@ -123,9 +123,9 @@ const Profile = () => {
                     <EditButton onPress={() => setModalVisible(true)} />
                 </View>
                 <ScrollView
-                    contentContainerStyle={{ paddingBottom: moderateScale(64) }}
+                    contentContainerStyle={{ flexGrow: 1, paddingBottom: moderateScale(64) }}
                     showsVerticalScrollIndicator={false}
-                    bounces={false}
+                    keyboardShouldPersistTaps="handled"
                 >
                     <View style={{ alignItems: 'center', gap: moderateScale(3), marginTop: moderateScale(16) }}>
                         <Image source={require('@/assets/images/profile.png')} style={{
