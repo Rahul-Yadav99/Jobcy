@@ -3,6 +3,7 @@ import ApplicantCard from '@/components/ApplicantCard'
 import { ApplicantCardSkeletonList } from '@/components/ApplicantCardSkeleton'
 import BackButton from '@/components/BackButton'
 import Empty from '@/components/Empty'
+import ErrorScreen from '@/components/ErrorScreen'
 import SafeScreen from '@/components/SafeScreen'
 import { colors, headingSize, spacing } from '@/utils/theme'
 import { useQuery } from '@tanstack/react-query'
@@ -10,10 +11,15 @@ import React from 'react'
 import { FlatList, Text, View } from 'react-native'
 
 const Applicants = () => {
-    const { data, isLoading, error } = useQuery({
+    const { data, isLoading, error, refetch } = useQuery({
         queryKey: ['applicants'],
         queryFn: recruiterApi.getAllApplicants
     })
+
+    if (error) {
+        return <ErrorScreen message={error.message} isDetailsScreen onRetry={() => refetch()} />
+    }
+
     return (
         <SafeScreen>
             <View

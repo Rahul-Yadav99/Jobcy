@@ -48,11 +48,13 @@ const Messages = () => {
                     isLoading ? <NotificationCardSkeletonList count={5} /> : <Empty message="You don't have any messages yet" />
                 }
                 refreshControl={
-                    <RefreshControl
-                        refreshing={isLoading}
-                        onRefresh={() => refetch()}
-                        tintColor={colors.primaryColor}
-                    />
+                    !isLoading ? (
+                        <RefreshControl
+                            refreshing={isLoading}
+                            onRefresh={() => refetch()}
+                            tintColor={colors.primaryColor}
+                        />
+                    ) : undefined
                 }
             />
         </SafeScreen>
