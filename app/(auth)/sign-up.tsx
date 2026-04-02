@@ -7,32 +7,49 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { moderateScale } from 'react-native-size-matters';
+import { useMutation } from '@tanstack/react-query';
+import authApi from '@/api/auth';
 
 const SignUp = () => {
     const router = useRouter();
     const [jobSeeker, setJobSeeker] = useState(true);
     const [recruiter, setRecruiter] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
 
+    const registerMutation = useMutation({
+        mutationFn: authApi.register,
+        onSuccess: () => {
+            Alert.alert('Success', 'Account created successfully');
+            router.push('/');
+        },
+        onError: (error: any) => {
+            Alert.alert('Error', error || 'Sign up failed');
+        }
+    });
+
     const handleSignUp = () => {
         const role = jobSeeker ? 'student' : 'recruiter';
-        try {
-            if (!name || !email || !phone || !password) {
-                Alert.alert('Error', 'Please fill all the fields');
-                return;
-            }
-            setLoading(true);
-            // Handle signup logic here
-            Alert.alert('Success', `Signed up as ${role}`);
-        } catch (error) {
-            Alert.alert('Error', 'Sign up failed');
-        } finally {
-            setLoading(false);
+        if (!name || !email || !phone || !password) {
+            Alert.alert('Error', 'Please fill all the fields');
+            return;
         }
+        
+        const indianPhoneRegex = /^[6-9]\d{9}$/;
+        if (!indianPhoneRegex.test(phone)) {
+            Alert.alert('Error', 'Please enter a valid 10-digit Indian phone number');
+            return;
+        }
+        
+        registerMutation.mutate({
+            fullname:name,
+            email,
+            phoneNumber:phone,
+            password,
+            role
+        });
     }
 
     return (
@@ -141,8 +158,8 @@ const SignUp = () => {
                             <Button
                                 title="Sign Up"
                                 onPress={handleSignUp}
-                                loading={loading}
-                                disabled={loading}
+                                loading={registerMutation.isPending}
+                                disabled={registerMutation.isPending}
                                 size="medium"
                             />
                         </View>

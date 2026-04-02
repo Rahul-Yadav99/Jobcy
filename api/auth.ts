@@ -9,6 +9,14 @@ const authApi = {
         } catch (error: any) {
             throw error.response.data.message;
         }
+    },
+    register: async (payload: any) => {
+        try {
+            const res = await axios.post(`${USER_API_END_POINT}/register`, payload);
+            return res.data;
+        } catch (error: any) {
+            throw error.response.data.message;
+        }
     }
 }
 
