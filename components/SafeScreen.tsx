@@ -6,7 +6,7 @@ const SafeScreen = ({ children }: { children: React.ReactNode }) => {
     return (
         <SafeAreaView
             style={styles.container}
-            edges={['top']}
+            edges={['top', 'bottom']}
         >
             {children}
         </SafeAreaView>

@@ -9,6 +9,7 @@ import React, { useState } from 'react'
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 import ModalCloseButton from './ModalCloseButton'
+import SafeScreen from './SafeScreen'
 import { Button, Input } from './ui'
 
 const statusColors: Record<string, { bg: string; text: string }> = {
@@ -402,123 +403,125 @@ const ApplicantCard = ({ item, isApplicant }: { item: any, isApplicant?: boolean
                 animationType="slide"
                 onRequestClose={resetMessageModal}
             >
-                <KeyboardAvoidingView
-                    style={{
-                        flex: 1,
-                    }}
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                >
-                    <ScrollView
-                        style={{ flex: 1, padding: spacing.md }}
-                        contentContainerStyle={{ flexGrow: 1 }}
-                        keyboardShouldPersistTaps="handled"
-                        showsVerticalScrollIndicator={false}
+                <SafeScreen>
+                    <KeyboardAvoidingView
+                        style={{
+                            flex: 1,
+                        }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     >
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                marginBottom: spacing.md,
-                            }}
+                        <ScrollView
+                            style={{ flex: 1, padding: spacing.md }}
+                            contentContainerStyle={{ flexGrow: 1 }}
+                            keyboardShouldPersistTaps="handled"
+                            showsVerticalScrollIndicator={false}
                         >
-                            <Text style={typography.h3}>Send Message</Text>
-                            <ModalCloseButton onPress={resetMessageModal} />
-                        </View>
-                        <View>
-                            <Text style={{ ...typography.h5, textTransform: 'capitalize', marginBottom: spacing.sm, color: colors.primaryTextColor, fontWeight: '600', }}>To : {applicant?.fullname ?? 'Applicant'}</Text>
-                            <Input
-                                label='Message'
-                                placeholder="Message"
-                                value={message}
-                                onChangeText={setMessage}
-                                multiline
-                                numberOfLines={140}
-                                required
-                            />
-                        </View>
-                        <Text style={{ ...typography.h5, textTransform: 'capitalize', marginBottom: spacing.sm, marginTop: spacing.sm, color: colors.primaryTextColor, fontWeight: '600', }}>Select Message Type</Text>
-                        <View>
-                            <TouchableOpacity
-                                onPress={() => setMessageDropdownOpen(!messageDropdownOpen)}
-                                activeOpacity={0.7}
+                            <View
                                 style={{
                                     flexDirection: 'row',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
-                                    borderWidth: 1,
-                                    borderColor: colors.disabledColor,
-                                    borderRadius: moderateScale(8),
-                                    paddingVertical: moderateScale(12),
-                                    paddingHorizontal: moderateScale(12),
+                                    marginBottom: spacing.md,
                                 }}
                             >
-                                <Text
-                                    style={{
-                                        fontSize: moderateScale(14),
-                                        fontWeight: '400',
-                                        color: colors.placeholderColor,
-                                        textTransform: 'capitalize',
-                                    }}
-                                >
-                                    {type}
-                                </Text>
-
-                                <ChevronDown
-                                    size={moderateScale(16)}
-                                    color={colors.secondaryTextColor}
-                                    style={{
-                                        transform: [{ rotate: messageDropdownOpen ? '180deg' : '0deg' }],
-                                    }}
+                                <Text style={typography.h3}>Send Message</Text>
+                                <ModalCloseButton onPress={resetMessageModal} />
+                            </View>
+                            <View>
+                                <Text style={{ ...typography.h5, textTransform: 'capitalize', marginBottom: spacing.sm, color: colors.primaryTextColor, fontWeight: '600', }}>To : {applicant?.fullname ?? 'Applicant'}</Text>
+                                <Input
+                                    label='Message'
+                                    placeholder="Message"
+                                    value={message}
+                                    onChangeText={setMessage}
+                                    multiline
+                                    numberOfLines={140}
+                                    required
                                 />
-                            </TouchableOpacity>
-
-                            {messageDropdownOpen && (
-                                <View
+                            </View>
+                            <Text style={{ ...typography.h5, textTransform: 'capitalize', marginBottom: spacing.sm, marginTop: spacing.sm, color: colors.primaryTextColor, fontWeight: '600', }}>Select Message Type</Text>
+                            <View>
+                                <TouchableOpacity
+                                    onPress={() => setMessageDropdownOpen(!messageDropdownOpen)}
+                                    activeOpacity={0.7}
                                     style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
                                         borderWidth: 1,
                                         borderColor: colors.disabledColor,
-                                        borderRadius: spacing.xs,
-                                        marginTop: spacing.xs,
-                                        overflow: 'hidden',
+                                        borderRadius: moderateScale(8),
+                                        paddingVertical: moderateScale(12),
+                                        paddingHorizontal: moderateScale(12),
                                     }}
                                 >
-                                    {messageOptions.map((option) => {
-                                        const isActive = type === option
+                                    <Text
+                                        style={{
+                                            fontSize: moderateScale(14),
+                                            fontWeight: '400',
+                                            color: colors.placeholderColor,
+                                            textTransform: 'capitalize',
+                                        }}
+                                    >
+                                        {type}
+                                    </Text>
 
-                                        return (
-                                            <TouchableOpacity
-                                                key={option}
-                                                onPress={() => {
-                                                    setType(option) // ✅ select value
-                                                    setMessageDropdownOpen(false) // ✅ close dropdown
-                                                }}
-                                                activeOpacity={0.7}
-                                                style={{
-                                                    paddingVertical: spacing.sm,
-                                                    paddingHorizontal: spacing.sm,
-                                                    backgroundColor: isActive ? '#eee' : '#fff',
-                                                }}
-                                            >
-                                                <Text
+                                    <ChevronDown
+                                        size={moderateScale(16)}
+                                        color={colors.secondaryTextColor}
+                                        style={{
+                                            transform: [{ rotate: messageDropdownOpen ? '180deg' : '0deg' }],
+                                        }}
+                                    />
+                                </TouchableOpacity>
+
+                                {messageDropdownOpen && (
+                                    <View
+                                        style={{
+                                            borderWidth: 1,
+                                            borderColor: colors.disabledColor,
+                                            borderRadius: spacing.xs,
+                                            marginTop: spacing.xs,
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        {messageOptions.map((option) => {
+                                            const isActive = type === option
+
+                                            return (
+                                                <TouchableOpacity
+                                                    key={option}
+                                                    onPress={() => {
+                                                        setType(option) // ✅ select value
+                                                        setMessageDropdownOpen(false) // ✅ close dropdown
+                                                    }}
+                                                    activeOpacity={0.7}
                                                     style={{
-                                                        fontSize: moderateScale(12),
-                                                        fontWeight: isActive ? '700' : '500',
-                                                        color: colors.primaryTextColor,
-                                                        textTransform: 'capitalize',
+                                                        paddingVertical: spacing.sm,
+                                                        paddingHorizontal: spacing.sm,
+                                                        backgroundColor: isActive ? '#eee' : '#fff',
                                                     }}
                                                 >
-                                                    {option}
-                                                </Text>
-                                            </TouchableOpacity>
-                                        )
-                                    })}
-                                </View>
-                            )}
-                        </View>
-                        <Button title='Send Message' onPress={handleSendMessage} loading={isSending} disabled={isSending || !message.trim()} size='medium' style={{ marginTop: spacing.md }} />
-                    </ScrollView>
-                </KeyboardAvoidingView>
+                                                    <Text
+                                                        style={{
+                                                            fontSize: moderateScale(12),
+                                                            fontWeight: isActive ? '700' : '500',
+                                                            color: colors.primaryTextColor,
+                                                            textTransform: 'capitalize',
+                                                        }}
+                                                    >
+                                                        {option}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })}
+                                    </View>
+                                )}
+                            </View>
+                            <Button title='Send Message' onPress={handleSendMessage} loading={isSending} disabled={isSending || !message.trim()} size='medium' style={{ marginTop: spacing.md }} />
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </SafeScreen>
             </Modal>
         </View>
     )

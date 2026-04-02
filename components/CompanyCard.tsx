@@ -11,6 +11,7 @@ import React, { useState } from 'react'
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
 import ModalCloseButton from './ModalCloseButton'
+import SafeScreen from './SafeScreen'
 
 const CompanyCard = ({ item }: { item: any }) => {
 
@@ -256,128 +257,130 @@ const CompanyCard = ({ item }: { item: any }) => {
                 animationType="slide"
                 onRequestClose={() => { setVisible(false); resetForm(); }}
             >
-                <KeyboardAvoidingView
-                    style={{ flex: 1 }}
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                >
-                    <ScrollView
-                        style={{
-                            flex: 1,
-                            padding: spacing.md,
-                            // backgroundColor: colo,
-                        }}
-                        contentContainerStyle={{ flexGrow: 1 }}
-                        keyboardShouldPersistTaps="handled"
+                <SafeScreen>
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                     >
-                        <View
+                        <ScrollView
                             style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                marginBottom: spacing.md,
+                                flex: 1,
+                                padding: spacing.md,
+                                // backgroundColor: colo,
                             }}
+                            contentContainerStyle={{ flexGrow: 1 }}
+                            keyboardShouldPersistTaps="handled"
                         >
-                            <Text style={typography.h3}>Update Company Details</Text>
-                            <ModalCloseButton onPress={() => { setVisible(false); resetForm(); }} />
-                        </View>
+                            <View
+                                style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginBottom: spacing.md,
+                                }}
+                            >
+                                <Text style={typography.h3}>Update Company Details</Text>
+                                <ModalCloseButton onPress={() => { setVisible(false); resetForm(); }} />
+                            </View>
 
-                        {/* Logo Section */}
-                        <TouchableOpacity
-                            onPress={pickFile}
-                            disabled={isUpdating}
-                            style={{
-                                borderWidth: 2,
-                                borderColor: colors.primaryColor,
-                                borderStyle: 'dashed',
-                                borderRadius: spacing.sm,
-                                padding: spacing.lg,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginBottom: spacing.md,
-                            }}
-                        >
-                            {companyDetails.file ? (
-                                <Image
-                                    source={{ uri: companyDetails.file.uri }}
-                                    style={{ width: 100, height: 100, borderRadius: spacing.sm }}
-                                    resizeMode='cover'
-                                />
-                            ) : item?.logo ? (
-                                <View>
+                            {/* Logo Section */}
+                            <TouchableOpacity
+                                onPress={pickFile}
+                                disabled={isUpdating}
+                                style={{
+                                    borderWidth: 2,
+                                    borderColor: colors.primaryColor,
+                                    borderStyle: 'dashed',
+                                    borderRadius: spacing.sm,
+                                    padding: spacing.lg,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginBottom: spacing.md,
+                                }}
+                            >
+                                {companyDetails.file ? (
                                     <Image
-                                        source={{ uri: item.logo }}
+                                        source={{ uri: companyDetails.file.uri }}
                                         style={{ width: 100, height: 100, borderRadius: spacing.sm }}
-                                        resizeMode='contain'
+                                        resizeMode='cover'
                                     />
-                                    <Text style={{ ...typography.body, marginTop: spacing.sm, textAlign: 'center' }}>
-                                        Tap to change logo
-                                    </Text>
-                                </View>
-                            ) : (
-                                <View style={{ alignItems: 'center' }}>
-                                    <ImagePlus size={moderateScale(40)} color={colors.primaryColor} />
-                                    <Text style={{ ...typography.body, marginTop: spacing.sm, color: colors.primaryColor }}>
-                                        Tap to add logo
-                                    </Text>
-                                </View>
-                            )}
-                        </TouchableOpacity>
+                                ) : item?.logo ? (
+                                    <View>
+                                        <Image
+                                            source={{ uri: item.logo }}
+                                            style={{ width: 100, height: 100, borderRadius: spacing.sm }}
+                                            resizeMode='contain'
+                                        />
+                                        <Text style={{ ...typography.body, marginTop: spacing.sm, textAlign: 'center' }}>
+                                            Tap to change logo
+                                        </Text>
+                                    </View>
+                                ) : (
+                                    <View style={{ alignItems: 'center' }}>
+                                        <ImagePlus size={moderateScale(40)} color={colors.primaryColor} />
+                                        <Text style={{ ...typography.body, marginTop: spacing.sm, color: colors.primaryColor }}>
+                                            Tap to add logo
+                                        </Text>
+                                    </View>
+                                )}
+                            </TouchableOpacity>
 
-                        {/* Company Name */}
-                        <Input
-                            label="Company Name"
-                            placeholder="Enter company name"
-                            value={companyDetails.name}
-                            onChangeText={(text) => setCompanyDetails({ ...companyDetails, name: text })}
-                            editable={!isUpdating}
-                            required
-                            containerStyle={{ marginBottom: spacing.md }}
-                        />
+                            {/* Company Name */}
+                            <Input
+                                label="Company Name"
+                                placeholder="Enter company name"
+                                value={companyDetails.name}
+                                onChangeText={(text) => setCompanyDetails({ ...companyDetails, name: text })}
+                                editable={!isUpdating}
+                                required
+                                containerStyle={{ marginBottom: spacing.md }}
+                            />
 
-                        {/* Description */}
-                        <Input
-                            label="Description"
-                            placeholder="Enter company description"
-                            value={companyDetails.description}
-                            onChangeText={(text) => setCompanyDetails({ ...companyDetails, description: text })}
-                            editable={!isUpdating}
-                            multiline
-                            numberOfLines={4}
-                            containerStyle={{ marginBottom: spacing.md }}
-                        />
+                            {/* Description */}
+                            <Input
+                                label="Description"
+                                placeholder="Enter company description"
+                                value={companyDetails.description}
+                                onChangeText={(text) => setCompanyDetails({ ...companyDetails, description: text })}
+                                editable={!isUpdating}
+                                multiline
+                                numberOfLines={4}
+                                containerStyle={{ marginBottom: spacing.md }}
+                            />
 
-                        {/* Website */}
-                        <Input
-                            label="Website"
-                            placeholder="https://example.com"
-                            value={companyDetails.website}
-                            onChangeText={(text) => setCompanyDetails({ ...companyDetails, website: text })}
-                            editable={!isUpdating}
-                            keyboardType="url"
-                            containerStyle={{ marginBottom: spacing.md }}
-                        />
+                            {/* Website */}
+                            <Input
+                                label="Website"
+                                placeholder="https://example.com"
+                                value={companyDetails.website}
+                                onChangeText={(text) => setCompanyDetails({ ...companyDetails, website: text })}
+                                editable={!isUpdating}
+                                keyboardType="url"
+                                containerStyle={{ marginBottom: spacing.md }}
+                            />
 
-                        {/* Location */}
-                        <Input
-                            label="Location"
-                            placeholder="Enter company location"
-                            value={companyDetails.location}
-                            onChangeText={(text) => setCompanyDetails({ ...companyDetails, location: text })}
-                            editable={!isUpdating}
-                            containerStyle={{ marginBottom: spacing.lg }}
-                        />
+                            {/* Location */}
+                            <Input
+                                label="Location"
+                                placeholder="Enter company location"
+                                value={companyDetails.location}
+                                onChangeText={(text) => setCompanyDetails({ ...companyDetails, location: text })}
+                                editable={!isUpdating}
+                                containerStyle={{ marginBottom: spacing.lg }}
+                            />
 
-                        {/* Update Button */}
-                        <Button
-                            title="Update Details"
-                            onPress={() => updateCompany()}
-                            loading={isUpdating}
-                            disabled={isUpdating || !companyDetails.name.trim()}
-                            size="medium"
-                            style={{ marginBottom: spacing.lg }}
-                        />
-                    </ScrollView>
-                </KeyboardAvoidingView>
+                            {/* Update Button */}
+                            <Button
+                                title="Update Details"
+                                onPress={() => updateCompany()}
+                                loading={isUpdating}
+                                disabled={isUpdating || !companyDetails.name.trim()}
+                                size="medium"
+                                style={{ marginBottom: spacing.lg }}
+                            />
+                        </ScrollView>
+                    </KeyboardAvoidingView>
+                </SafeScreen>
             </Modal>
         </View>
     )

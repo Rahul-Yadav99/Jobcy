@@ -249,96 +249,98 @@ const Profile = () => {
                 animationType="slide"
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View style={{ padding: moderateScale(16), flex: 1, backgroundColor: 'white' }}>
-                    <View className='flex-row items-center justify-between'>
-                        <Text style={{ fontSize: moderateScale(20), fontWeight: 'bold', color: primaryTextColor }}>Edit Profile</Text>
-                        <ModalCloseButton onPress={() => setModalVisible(false)} />
-                    </View>
-                    <ScrollView
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ flexGrow: 1 }}
-                    >
-                        <Image source={require('@/assets/images/profile.png')} style={{
-                            height: moderateScale(100),
-                            width: moderateScale(100),
-                            borderRadius: moderateScale(50),
-                            alignSelf: 'center',
-                        }} />
-                        <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1), gap: moderateScale(12) }}>
-                            <Input
-                                label="Name"
-                                placeholder="Enter your name"
-                                value={fullName}
-                                onChangeText={setFullName}
-                                autoCorrect={false}
-                                required
-                            />
-                            <Input
-                                label="Email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChangeText={setEmail}
-                                autoCorrect={false}
-                                keyboardType="email-address"
-                                required
-                            />
-                            <Input
-                                label="College"
-                                placeholder="Enter your college name"
-                                value={collegeName}
-                                onChangeText={setCollegeName}
-                            />
-                            <Input
-                                label="Current Company"
-                                placeholder="Enter your current company name"
-                                value={currentCompanyName}
-                                onChangeText={setCurrentCompanyName}
-                            />
-                            <Input
-                                label="Phone Number"
-                                placeholder="Enter your phone number"
-                                value={phoneNumber}
-                                keyboardType="phone-pad"
-                                maxLength={10}
-                                onChangeText={(text) => {
-                                    const cleaned = text.replace(/[^0-9]/g, "");
-                                    setPhoneNumber(cleaned);
-                                }}
-                                required
-                            />
-                            <Input
-                                label="Bio"
-                                placeholder="Enter your bio"
-                                value={bio}
-                                onChangeText={setBio}
-                                multiline
-                                numberOfLines={3}
-                            />
-                            <View>
-                                <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
-                                    className='font-semibold'>
-                                    Resume
-                                </Text>
-
-                                <TouchableOpacity
-                                    onPress={pickResume}
-                                    className='border border-neutral-300 rounded-lg px-4 py-3 mt-2'
-                                >
-                                    <Text style={{ color: secondaryTextColor }}>
-                                        {resume?.name ? resume.name : "Select Resume (PDF/DOC)"}
-                                    </Text>
-                                </TouchableOpacity>
-                            </View>
-                            <Button
-                                title="Update Profile"
-                                onPress={handleUpdateProfile}
-                                loading={loading}
-                                disabled={loading}
-                                size="medium"
-                            />
+                <SafeScreen>
+                    <View style={{ padding: moderateScale(16), flex: 1, backgroundColor: 'white' }}>
+                        <View className='flex-row items-center justify-between'>
+                            <Text style={{ fontSize: moderateScale(20), fontWeight: 'bold', color: primaryTextColor }}>Edit Profile</Text>
+                            <ModalCloseButton onPress={() => setModalVisible(false)} />
                         </View>
-                    </ScrollView>
-                </View>
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                            contentContainerStyle={{ flexGrow: 1 }}
+                        >
+                            <Image source={require('@/assets/images/profile.png')} style={{
+                                height: moderateScale(100),
+                                width: moderateScale(100),
+                                borderRadius: moderateScale(50),
+                                alignSelf: 'center',
+                            }} />
+                            <View style={{ marginTop: moderateScale(16), paddingHorizontal: moderateScale(1), gap: moderateScale(12) }}>
+                                <Input
+                                    label="Name"
+                                    placeholder="Enter your name"
+                                    value={fullName}
+                                    onChangeText={setFullName}
+                                    autoCorrect={false}
+                                    required
+                                />
+                                <Input
+                                    label="Email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    autoCorrect={false}
+                                    keyboardType="email-address"
+                                    required
+                                />
+                                <Input
+                                    label="College"
+                                    placeholder="Enter your college name"
+                                    value={collegeName}
+                                    onChangeText={setCollegeName}
+                                />
+                                <Input
+                                    label="Current Company"
+                                    placeholder="Enter your current company name"
+                                    value={currentCompanyName}
+                                    onChangeText={setCurrentCompanyName}
+                                />
+                                <Input
+                                    label="Phone Number"
+                                    placeholder="Enter your phone number"
+                                    value={phoneNumber}
+                                    keyboardType="phone-pad"
+                                    maxLength={10}
+                                    onChangeText={(text) => {
+                                        const cleaned = text.replace(/[^0-9]/g, "");
+                                        setPhoneNumber(cleaned);
+                                    }}
+                                    required
+                                />
+                                <Input
+                                    label="Bio"
+                                    placeholder="Enter your bio"
+                                    value={bio}
+                                    onChangeText={setBio}
+                                    multiline
+                                    numberOfLines={3}
+                                />
+                                <View>
+                                    <Text style={{ fontSize: moderateScale(14), color: primaryTextColor }}
+                                        className='font-semibold'>
+                                        Resume
+                                    </Text>
+
+                                    <TouchableOpacity
+                                        onPress={pickResume}
+                                        className='border border-neutral-300 rounded-lg px-4 py-3 mt-2'
+                                    >
+                                        <Text style={{ color: secondaryTextColor }}>
+                                            {resume?.name ? resume.name : "Select Resume (PDF/DOC)"}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                                <Button
+                                    title="Update Profile"
+                                    onPress={handleUpdateProfile}
+                                    loading={loading}
+                                    disabled={loading}
+                                    size="medium"
+                                />
+                            </View>
+                        </ScrollView>
+                    </View>
+                </SafeScreen>
             </Modal>
         </SafeScreen>
     )

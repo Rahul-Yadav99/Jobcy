@@ -114,48 +114,50 @@ const RecruiterHome = () => {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View
-                    style={{
-                        flex: 1,
-                        padding: spacing.md,
-                    }}
-                >
+                <SafeScreen>
                     <View
                         style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
+                            flex: 1,
+                            padding: spacing.md,
                         }}
                     >
-                        <Text style={typography.h3}>Create Company</Text>
-                        <ModalCloseButton onPress={() => setModalVisible(false)} />
-                    </View>
+                        <View
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <Text style={typography.h3}>Create Company</Text>
+                            <ModalCloseButton onPress={() => setModalVisible(false)} />
+                        </View>
 
-                    <View
-                        style={{
-                            marginTop: spacing.md,
-                        }}
-                    >
-                        <Input
-                            label="Company Name"
-                            placeholder="Enter company name"
-                            value={companyName}
-                            onChangeText={setCompanyName}
-                            editable={!isPending}
-                            required
+                        <View
+                            style={{
+                                marginTop: spacing.md,
+                            }}
+                        >
+                            <Input
+                                label="Company Name"
+                                placeholder="Enter company name"
+                                value={companyName}
+                                onChangeText={setCompanyName}
+                                editable={!isPending}
+                                required
+                            />
+                        </View>
+
+                        {/* ✅ onPress connected + disabled while loading */}
+                        <Button
+                            title="Create Company"
+                            onPress={handleCreateCompany}
+                            loading={isPending}
+                            disabled={isPending}
+                            size="medium"
+                            style={{ marginTop: spacing.md }}
                         />
                     </View>
-
-                    {/* ✅ onPress connected + disabled while loading */}
-                    <Button
-                        title="Create Company"
-                        onPress={handleCreateCompany}
-                        loading={isPending}
-                        disabled={isPending}
-                        size="medium"
-                        style={{ marginTop: spacing.md }}
-                    />
-                </View>
+                </SafeScreen>
             </Modal>
         </SafeScreen>
     )
