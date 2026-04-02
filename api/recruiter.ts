@@ -185,7 +185,6 @@ const recruiterApi = {
             })
             return response.data
         } catch (error: any) {
-            console.log(error);
             throw error.response.data.error;
         }
     }

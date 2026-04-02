@@ -40,3 +40,28 @@ export const headingSize = {
     h4: moderateScale(16),
     h5: moderateScale(14),
 };
+
+
+
+
+
+
+
+
+type Status = 'pending' | 'accepted' | 'rejected' | 'viewed';
+
+interface StatusStyle {
+    bg: string;
+    text: string;
+}
+
+const statusStyles: Record<Status, StatusStyle> = {
+    pending: { bg: '#FEF3C7', text: '#D97706' },
+    accepted: { bg: '#D1FAE5', text: '#059669' },
+    rejected: { bg: '#FEE2E2', text: '#DC2626' },
+    viewed: { bg: '#EFF6FF', text: '#1D4ED8' },
+};
+
+export const getStatusStyle = (status: Status): StatusStyle => {
+    return statusStyles[status] || statusStyles.pending;
+};

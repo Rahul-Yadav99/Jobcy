@@ -38,11 +38,9 @@ const JobDetails = () => {
         onSuccess: () => {
             // Invalidate and refetch the job details to get updated applications list
             queryClient.invalidateQueries({ queryKey: ['job', jobId] });
-            console.log("Application successful");
         },
         onError: (error) => {
-            console.error("Application failed:", error);
-            alert("Failed to apply for job. Please try again.");
+            alert(error);
         }
     })
 

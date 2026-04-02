@@ -1,5 +1,6 @@
 import studentApi from '@/api/student'
 import BackButton from '@/components/BackButton'
+import Empty from '@/components/Empty'
 import NotificationCard from '@/components/NotificationCard'
 import { NotificationCardSkeletonList } from '@/components/NotificationCardSkeleton'
 import SafeScreen from '@/components/SafeScreen'
@@ -39,14 +40,16 @@ const Notification = () => {
                 keyExtractor={(item) => item._id}
                 renderItem={({ item }) => <NotificationCard item={item} />}
                 ListEmptyComponent={
-                    isLoading ? <NotificationCardSkeletonList count={5} /> : null
+                    isLoading ? <NotificationCardSkeletonList count={5} /> : <Empty message="You don't have any notifications yet" />
                 }
                 refreshControl={
-                    <RefreshControl
-                        refreshing={isLoading}
-                        onRefresh={() => refetch()}
-                        tintColor={colors.primaryColor}
-                    />
+                    !isLoading ? (
+                        <RefreshControl
+                            refreshing={isLoading}
+                            onRefresh={() => refetch()}
+                            tintColor={colors.primaryColor}
+                        />
+                    ) : undefined
                 }
             />
         </SafeScreen>

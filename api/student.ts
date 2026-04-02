@@ -31,7 +31,6 @@ const studentApi = {
     },
 
     applyJob: async (id: string) => {
-        console.log("id", id)
         try {
             const response = await axios.get(`${APPLICATION_API_END_POINT}/apply/${id}`, {
                 withCredentials: true,

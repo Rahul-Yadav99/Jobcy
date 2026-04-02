@@ -111,7 +111,7 @@ const Jobs = () => {
                 <FlatList
                     data={isLoading ? [] : (data || [])}
                     keyExtractor={(item) => item?._id}
-                    renderItem={({ item }) => <JobCard job={item} />}
+                    renderItem={({ item }) => <JobCard job={item} isAppliedJob={false} />}
                     showsVerticalScrollIndicator={false}
                     ListHeaderComponent={
                         <>
