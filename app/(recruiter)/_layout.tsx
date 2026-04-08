@@ -1,6 +1,6 @@
 import { colors, primaryColor } from '@/utils/theme'
 import { Tabs } from 'expo-router'
-import { Bot, Building, LayoutDashboard, Newspaper, SparkleIcon, Sparkles } from 'lucide-react-native'
+import { Building, LayoutDashboard, Newspaper, Sparkles } from 'lucide-react-native'
 import React from 'react'
 import { Image } from 'react-native'
 import { moderateScale } from 'react-native-size-matters'
